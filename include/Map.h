@@ -14,8 +14,8 @@
 #define get_map_x(x) (((x) - MAP_LEFT) / MAP_CELL_SIZE)
 #define get_map_y(y) (((y) - MAP_TOP) / MAP_CELL_SIZE)
 
-#define get_pixel_x(x) ((x) * MAP_CELL_SIZE + MAP_LEFT + MAP_CELL_HALF)
-#define get_pixel_y(y) ((y) * MAP_CELL_SIZE + MAP_TOP + MAP_CELL_HALF)
+#define get_pixel_x(x) ((x) * MAP_CELL_SIZE + MAP_LEFT)
+#define get_pixel_y(y) ((y) * MAP_CELL_SIZE + MAP_TOP)
 
 enum map_type {MAP_EMPTY, MAP_DESTRUCTIBLE, MAP_INDESTRUCTIBLE, MAP_PROPS, MAP_BOMB};
 

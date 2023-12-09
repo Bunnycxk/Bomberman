@@ -54,7 +54,8 @@ Item::~Item(){
     fb_free_image(img);
 }
 
-void Item::set(std::shared_ptr<Map> mp, Item *icon){
+
+void Item::set_backgroud(std::shared_ptr<Map> mp, Item *icon){
     
     for (int i = 0; i < MAP_ROW; i++)
     for (int j = 0; j < MAP_COLUMN; j++){     
@@ -109,8 +110,6 @@ void Item::draw(int x, int y, action_type type, uint &frame_now, uint &speed_cnt
     Postion &pos = now_action.postion[frame_now];
     fb_image *sub_img = fb_get_sub_image(img, pos.x, pos.y, pos.w, pos.h);
     fb_draw_image(x, y, sub_img, 0);
-    printf("%d %d\n",speed_cnt, frame_now);
-    printf("%d %d %d %d\n",pos.x, pos.y, pos.w, pos.h);
     if (++speed_cnt >= FPS / now_action.speed) {
         speed_cnt = 0;
         if (++frame_now >= now_action.frame_num) frame_now = 0;

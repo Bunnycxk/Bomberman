@@ -13,11 +13,11 @@ void Game::init(){
 	font_init(config.font_filename.c_str());
 	mp = std::make_shared<Map>(config.map_filename.c_str());
 	// create a map
-	config.game_backgroud->set(mp, config.icon);
-	backgroud = std::make_shared<Object>(TYPE_BACKGROUD, config.game_backgroud, 0, 0, nullptr);
+	config.game_backgroud->set_backgroud(mp, config.icon);
+	backgroud = std::make_shared<Object>(TYPE_BACKGROUD, config.game_backgroud, 0, 0, nullptr, 0);
 	object.insert(backgroud);
 	// create a role
-	player = std::make_shared<Object>(TYPE_ROLE, config.role, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, nullptr);
+	player = std::make_shared<Object>(TYPE_ROLE, config.role, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, nullptr, 1);
 	object.insert(player);
 
 	// bomb = std::make_shared<Object>(TYPE_BOMB, config.bomb, MAP_LEFT, MAP_TOP);
@@ -57,16 +57,30 @@ void draw(int fb, Game *game){
 	printf("---a new frame---\n");
 	for (auto obj : game->object){
 		// to-do
-		obj->print_info();
+		if (obj->obj_type == TYPE_BOMB) obj->print_info();
 		if (obj->obj_type == TYPE_ROLE) obj->move(game->mp);
-		obj->draw();
+		obj->draw(game->mp);
 	}
 	for (auto it = game->object.begin(); it != game->object.end();){
 		if ((*it)->time_to_live == 0){
-			uint x = get_map_x((*it)->postion_x), y = get_map_y((*it)->postion_y); 
-			game->mp->cell[y][x] = 0;
-			it = game->object.erase(it);
-
+			switch ((*it)->obj_type)
+			{
+			case TYPE_BOMB:
+				{
+					uint x = get_map_x((*it)->postion_x), y = get_map_y((*it)->postion_y); 
+					game->mp->cell[y][x] = 0;
+					if ((*it)->act_type == ACTION_STOP){
+						(*it)->time_to_live = 2 * FPS/10;  // 爆炸 0.2s
+						(*it)->set_action_type(ACTION_BOMB_CENTER);
+					}else {
+						it = game->object.erase(it);
+					}
+				}
+				break;
+				
+			default:
+				break;
+			}
 		}else {
 			it++;
 		}
