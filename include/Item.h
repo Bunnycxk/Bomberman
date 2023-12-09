@@ -28,17 +28,15 @@ class Item
 {
 private:
     /* data */
-    fb_image *img;
+    
     Action action[ACTION_COUNT];
-    uint frame_now;
-    uint speed_cnt;
 public:
+    fb_image *img;
     Item(Json::Value &value);
     ~Item();
     void print_info();
-    void draw(int x, int y, action_type type);
+    void draw(int x, int y, action_type type, uint &frame_num, uint &speed_cnt);
     void set(std::shared_ptr<Map> mp, Item *icon);
-    void clear_cnt();
 };
 
 

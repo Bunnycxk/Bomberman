@@ -18,10 +18,9 @@ std::map<std::string, action_type>action_map={
 };
  
 Item::Item(Json::Value &value){
-    frame_now = speed_cnt = 0;
-    
     auto img_url = value["image_url"].asCString();
     auto img_type = value["image_type"].asString();
+    printf("%s\b",img_url);
     if (img_type == "png") {
         img = fb_read_png_image(img_url);
     }else
@@ -59,7 +58,6 @@ void Item::set(std::shared_ptr<Map> mp, Item *icon){
     
     for (int i = 0; i < MAP_ROW; i++)
     for (int j = 0; j < MAP_COLUMN; j++){     
-        
         int icon_type = rand();
         action_type cell_type = ACTION_STOP;
         switch (mp->cell[i][j])
@@ -106,20 +104,18 @@ void Item::set(std::shared_ptr<Map> mp, Item *icon){
     }
 }
 
-void Item::clear_cnt(){
-    frame_now = speed_cnt = 0;
-}
-
-void Item::draw(int x, int y, action_type type){
+void Item::draw(int x, int y, action_type type, uint &frame_now, uint &speed_cnt){
     Action &now_action = action[type];
     Postion &pos = now_action.postion[frame_now];
     fb_image *sub_img = fb_get_sub_image(img, pos.x, pos.y, pos.w, pos.h);
     fb_draw_image(x, y, sub_img, 0);
-    if (++speed_cnt > FPS / now_action.speed) {
+    printf("%d %d\n",speed_cnt, frame_now);
+    printf("%d %d %d %d\n",pos.x, pos.y, pos.w, pos.h);
+    if (++speed_cnt >= FPS / now_action.speed) {
         speed_cnt = 0;
         if (++frame_now >= now_action.frame_num) frame_now = 0;
     }
-    printf("%d %d\n",type, frame_now);
+    //printf("%d %d\n",type, frame_now);
     free(sub_img);
 }
 void Item::print_info(){

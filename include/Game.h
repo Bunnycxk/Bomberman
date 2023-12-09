@@ -25,12 +25,12 @@ private:
     /* data */
     int gamepad_fd;                     // 游戏手柄的文件句柄
 
-    Config config;
-    
 public:
+    Config config;
     std::set< std::shared_ptr<Object> >object;             // 用 set 维护object
     std::shared_ptr<Object> player;       // 玩家
     std::shared_ptr<Object> backgroud;    // 背景
+    std::shared_ptr<Object> bomb;        
     std::shared_ptr<Map> mp;
 
 public:

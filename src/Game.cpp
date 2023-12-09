@@ -14,12 +14,14 @@ void Game::init(){
 	mp = std::make_shared<Map>(config.map_filename.c_str());
 	// create a map
 	config.game_backgroud->set(mp, config.icon);
-	backgroud = std::make_shared<Object>(TYPE_BACKGROUD, config.game_backgroud);
+	backgroud = std::make_shared<Object>(TYPE_BACKGROUD, config.game_backgroud, 0, 0, nullptr);
 	object.insert(backgroud);
 	// create a role
-	player = std::make_shared<Object>(TYPE_ROLE, config.role, MAP_LEFT, MAP_TOP);
+	player = std::make_shared<Object>(TYPE_ROLE, config.role, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, nullptr);
 	object.insert(player);
 
+	// bomb = std::make_shared<Object>(TYPE_BOMB, config.bomb, MAP_LEFT, MAP_TOP);
+	// object.insert(bomb);
 	// 游戏手柄初始化
     gamepad_fd = gamepad_init(config.gamepad_filename.c_str()); 
     task_add_file(gamepad_fd, this, &gamepad_event_cb);
@@ -27,7 +29,8 @@ void Game::init(){
 	// 绑定绘图
     task_add_timer(1000/FPS, this, &draw); /*每一帧调用一次绘图*/
 
-	
+	fb_draw_rect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT,FB_COLOR(0,0,0));
+	fb_update();
 }
 
 void Game::create_map(){
@@ -51,15 +54,25 @@ void Game::run(){
 */
 
 void draw(int fb, Game *game){
-
+	printf("---a new frame---\n");
 	for (auto obj : game->object){
 		// to-do
 		obj->print_info();
 		if (obj->obj_type == TYPE_ROLE) obj->move(game->mp);
 		obj->draw();
-		
+	}
+	for (auto it = game->object.begin(); it != game->object.end();){
+		if ((*it)->time_to_live == 0){
+			uint x = get_map_x((*it)->postion_x), y = get_map_y((*it)->postion_y); 
+			game->mp->cell[y][x] = 0;
+			it = game->object.erase(it);
+
+		}else {
+			it++;
+		}
 	}
 	fb_update();
+	printf("---------------\n");
 }
 
 void gamepad_event_cb(int fd, Game *game){
@@ -116,6 +129,12 @@ void gamepad_event_cb(int fd, Game *game){
 	case GAMEPAD_A_TOUCH:
 		printf("button A touch!\n");
 		//set_bomb(man);
+		{
+			auto new_bomb = game->player->set_bomb(game->mp, game->config.bomb);
+			if (new_bomb){	// 成功放置
+				game->object.insert(new_bomb);
+			}
+		}
 		break;
 	default:
 		break;
