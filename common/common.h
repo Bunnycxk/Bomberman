@@ -13,6 +13,10 @@
 #include <pthread.h>
 #include <math.h>
 #include <assert.h>
+/* FPS  */
+#define FPS 30
+
+
 /*======================== task.c ============================*/
 
 #ifdef __cplusplus
@@ -58,7 +62,7 @@ typedef struct {
 	int top;	//上跨距
 } fb_font_info;
 
-void font_init(char *font_file);
+void font_init(const char *font_file);
 fb_image * fb_read_font_image(const char *text, int pixel_size, fb_font_info *format);
 
 #ifdef __cplusplus
@@ -74,7 +78,7 @@ fb_image * fb_read_font_image(const char *text, int pixel_size, fb_font_info *fo
 extern "C" {
 #endif
 
-void fb_init(char *dev);
+void fb_init(const char *dev);
 void fb_update(void);
 
 /*lab2*/
@@ -106,7 +110,7 @@ void fb_mix_pixel(char* col_1, char *col_2);
 extern "C" {
 #endif
 
-int touch_init(char *dev); /*返回touch_fd*/
+int touch_init(const char *dev); /*返回touch_fd*/
 int touch_read(int touch_fd, int *x, int *y, int *finger);
 
 /*=========================== board.c ===============================*/

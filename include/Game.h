@@ -1,11 +1,12 @@
 #pragma once
 #include <set>
+#include <memory>
 #include "../common/common.h"
 #include "Gamepad.h"
 #include "Object.h"
 #include "Config.h"
+#include "Map.h"
 
-#define FPS 24
 
 /*
     Game 是游戏实体
@@ -23,17 +24,22 @@ class Game
 private:
     /* data */
     int gamepad_fd;                     // 游戏手柄的文件句柄
-    Object *player;                     // 玩家
+
     Config config;
-public:
-    std::set<Object>object;             // 用 set 维护object
     
+public:
+    std::set< std::shared_ptr<Object> >object;             // 用 set 维护object
+    std::shared_ptr<Object> player;       // 玩家
+    std::shared_ptr<Object> backgroud;    // 背景
+    std::shared_ptr<Map> mp;
+
+public:
     Game(/* args */);
     ~Game();
 
     void init();
     void run();
-    
+    void create_map();
 };
 
 void gamepad_event_cb(int fd, Game *game);

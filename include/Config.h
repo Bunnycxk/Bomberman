@@ -13,10 +13,14 @@ private:
 
 public:
 
-    Item* game_backgroud;
-    Item* icon;
-    Item* bomb;
-
+    Item *game_backgroud;
+    Item *icon;
+    Item *bomb;
+    Item *role;
+    std::string fb_filename;
+    std::string font_filename;
+    std::string gamepad_filename;
+    std::string map_filename;
     Config(/* args */);
     ~Config();
 };

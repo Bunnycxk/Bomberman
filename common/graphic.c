@@ -33,7 +33,7 @@ static struct area {
 	b = t;\
 }
 
-void fb_init(char *dev)
+void fb_init(const char *dev)
 {
 	int fd;
 	struct fb_fix_screeninfo fb_fix;

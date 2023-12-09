@@ -44,7 +44,6 @@ fb_image *fb_get_sub_image(fb_image *img, int x, int y, int w, int h)
 		(x+w > img->pixel_w)||
 		(y+h > img->pixel_w))
 		return NULL;
-
 	ret = (fb_image *)malloc(sizeof(fb_image));
 	if(ret != NULL) {
 		ret->color_type = img->color_type;
@@ -130,14 +129,12 @@ fb_image *fb_read_png_image(const char *file)
 		printf("open png file failed: error %d\n",errno);
 		return NULL;
 	}
-
 	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (png_ptr == NULL) {
 		printf("png_create_read_struct failed\n");
 		fclose(fp);
 		return NULL;
 	}
-	
 	// Allocate/initialize the memory for image information.  REQUIRED. 
 	info_ptr = png_create_info_struct(png_ptr);
 	if(info_ptr == NULL) {
@@ -146,7 +143,6 @@ fb_image *fb_read_png_image(const char *file)
 		png_destroy_read_struct(&png_ptr, NULL, NULL);
 		return NULL;
 	}
-	
 	/* Set error handling if you are using the setjmp/longjmp method (this is
 	* the normal method of doing things with libpng).  REQUIRED unless you
 	* set up your own error handlers in the png_create_read_struct() earlier.
@@ -252,7 +248,7 @@ static FT_ULong Utf8ToUnicode(const char *utf8, int len)
 }
 #endif
 
-void font_init(char *font_file)
+void font_init(const char *font_file)
 {
 	FT_Error error;
 

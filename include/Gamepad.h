@@ -28,4 +28,4 @@
 
 int gamepad_read(int gamepad_fd);
 
-int gamepad_init(char *dev);
+int gamepad_init(const char *dev);

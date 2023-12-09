@@ -15,7 +15,7 @@ static struct finger_info{
 } infos[FINGER_NUM_MAX];
 static int cur_slot = 0;
 
-int touch_init(char *dev)
+int touch_init(const char *dev)
 {
 	int fd = open(dev, O_RDONLY);
 	if(fd < 0){

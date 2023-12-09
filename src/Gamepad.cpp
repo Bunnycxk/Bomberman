@@ -1,6 +1,6 @@
 #include "../include/Gamepad.h"
 
-int gamepad_init(char *dev)
+int gamepad_init(const char *dev)
 {
 	int fd = open(dev, O_RDONLY);
 	if(fd < 0){

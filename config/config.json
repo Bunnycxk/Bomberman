@@ -1,147 +1,182 @@
 {
-    "game_backgroud":{
-        "image_url" : "./resource/image/backgroud/game_backgroud.png",
-        "image_type" : "png",
-        "action" : [
-            {
-                "action_type" : "stop",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x" : [0],
-                "y" : [0],
-                "width" : [1024],
-                "height" : [600]
+    "action_config" :
+    {
+        "game_backgroud":{
+            "image_url" : "./resource/image/backgroud/game_backgroud.jpg",
+            "image_type" : "jpg",
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x" : [0],
+                    "y" : [0],
+                    "width" : [1024],
+                    "height" : [600]
+                }
+            ]
+        },
+        "icon":{
+            "image_url" : "./resource/image/icon/icon.png",
+            "image_type" : "png",
+            "action" : [
+                {
+                    "action_type" : "destructible",
+                    "speed" : 1,
+                    "frame_num" : 11,
+                    "x" : [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640],
+                    "y" : [0,  0,   0,    0,  0,   0,   0,   0,   0,   0,   0],
+                    "width" :  [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64],
+                    "height" : [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
+                },
+                {
+                    "action_type" : "indestructible",
+                    "speed" : 1,
+                    "frame_num" : 3,
+                    "x" : [0,  64, 128],
+                    "y" : [64, 64,  64],
+                    "width" :  [64, 64, 64],
+                    "height" : [64, 64, 64]
+                },
+                {
+                    "action_type" : "props",
+                    "speed" : 1,
+                    "frame_num" : 5,
+                    "x" : [  0,  64, 128, 192, 256],
+                    "y" : [128, 128, 128, 128, 128],
+                    "width" :  [64, 64, 64, 64, 64],
+                    "height" : [64, 64, 64, 64, 64]
+                }
+            ]
+        },
+        "bomb":{
+            "image_url" : "./resource/image/bomb/bomb.png",
+            "image_type" : "png",
+            "action_num" : 10,
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 10,
+                    "frame_num" : 2,
+                    "x": [0, 64],
+                    "y": [0,  0],
+                    "width":  [64, 64],
+                    "height": [64, 64]
+                },
+                {
+                    "action_type" : "bomb_center",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [128],
+                    "y": [0],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_left",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [0],
+                    "y": [64],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_right",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [128],
+                    "y": [64],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_up",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [64],
+                    "y": [64],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_down",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [192],
+                    "y": [64],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_left_end",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [128],
+                    "y": [128],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_right_end",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [0],
+                    "y": [128],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_up_end",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [64],
+                    "y": [128],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_down_end",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [192],
+                    "y": [128],
+                    "width":  [64],
+                    "height": [64]
+                }
+            ]
+        },
+        "role":{
+            "image_url" : "./resource/image/role/man.png",
+            "image_type" : "png",
+            "action_num" : 2,
+            "action" : [
+                {
+                    "action_type" : "move",
+                    "speed" : 9,
+                    "frame_num" : 3,
+                    "x": [0,  64, 128],
+                    "y": [64, 64,  64],
+                    "width":  [64, 64, 64],
+                    "height": [64, 64, 64]
+                },
+                {
+                    "action_type" : "stop",
+                    "speed" : 8,
+                    "frame_num" : 8,
+                    "x": [0, 64, 128, 192, 256, 320, 384, 448],
+                    "y": [0,  0,   0,   0,   0,   0,   0,   0],
+                    "width":  [64, 64, 64, 64, 64, 64, 64, 64],
+                    "height": [64, 64, 64, 64, 64, 64, 64, 64]
             }
-        ]
+            ]
+        }
     },
-    "icon":{
-        "image_url" : "./resource/image/icon/icon.png",
-        "image_type" : "png",
-        "action" : [
-            {
-                "action_type" : "destructible",
-                "speed" : 1,
-                "frame_num" : 11,
-                "x" : [0, 64, 128, 192, 256, 320, 384, 448, 512, 576, 640],
-                "y" : [0,  0,   0,    0,  0,   0,   0,   0,   0,   0,   0],
-                "width" :  [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64],
-                "height" : [64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64]
-            },
-            {
-                "action_type" : "indestructible",
-                "speed" : 1,
-                "frame_num" : 3,
-                "x" : [0, 64, 128],
-                "y" : [0,  0,   0],
-                "width" :  [64, 64, 64],
-                "height" : [64, 64, 64]
-            },
-            {
-                "action_type" : "props",
-                "speed" : 1,
-                "frame_num" : 5,
-                "x" : [0, 64, 128, 192, 256],
-                "y" : [0,  0,   0,   0,   0],
-                "width" :  [64, 64, 64, 64, 64],
-                "height" : [64, 64, 64, 64, 64]
-            }
-        ]
-    },
-    "bomb":{
-        "image_url" : "./resource/image/bomb/bomb.png",
-        "image_type" : "png",
-        "action_num" : 10,
-        "action" : [
-            {
-                "action_type" : "stop",
-                "speed" : 10,
-                "frame_num" : 2,
-                "x": [0, 64],
-                "y": [0,  0],
-                "width":  [64, 64],
-                "height": [64, 64]
-            },
-            {
-                "action_type" : "bomb_center",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [128],
-                "y": [0],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_left",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [0],
-                "y": [64],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_right",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [128],
-                "y": [64],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_up",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [64],
-                "y": [64],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_down",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [192],
-                "y": [64],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_left_end",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [128],
-                "y": [128],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_right_end",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [0],
-                "y": [128],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_up_end",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [64],
-                "y": [128],
-                "width":  [64],
-                "height": [64]
-            },
-            {
-                "action_type" : "bomb_down_end",
-                "speed" : 1,
-                "frame_num" : 1,
-                "x": [192],
-                "y": [128],
-                "width":  [64],
-                "height": [64]
-            }
-        ]
+    "file_config":
+    {
+        "fb_file" : "/dev/fb0",
+        "font_file" : "./resource/font.ttc",
+        "gamepad_file" : "/dev/input/event3",
+        "map_file" : "./config/map/map0.txt"        
     }
 }
