@@ -3,7 +3,7 @@
 #include <map>
 #include <vector>
 #include "../common/common.h"
-#include "Map.h"
+
 
 enum action_type {
                 ACTION_STOP, ACTION_MOVE, 
@@ -28,15 +28,14 @@ class Item
 {
 private:
     /* data */
-    
-    Action action[ACTION_COUNT];
 public:
+    Action action[ACTION_COUNT];
     fb_image *img;
     Item(Json::Value &value);
     ~Item();
     void print_info();
     void draw(int x, int y, action_type type, uint &frame_num, uint &speed_cnt);
-    void set_backgroud(std::shared_ptr<Map> mp, Item *icon);
+    //void set_backgroud(std::shared_ptr<Map> mp, Item *icon);
 };
 
 

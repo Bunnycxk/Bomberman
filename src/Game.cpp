@@ -11,11 +11,16 @@ void Game::init(){
 	
     fb_init(config.fb_filename.c_str());
 	font_init(config.font_filename.c_str());
-	mp = std::make_shared<Map>(config.map_filename.c_str());
 	// create a map
-	config.game_backgroud->set_backgroud(mp, config.icon);
+	mp = std::make_shared<Map>(config.map_filename.c_str(), config.icon);
+
+	//config.game_backgroud->set_backgroud(mp, config.icon);
+
+	// create a backgroud
 	backgroud = std::make_shared<Object>(TYPE_BACKGROUD, config.game_backgroud, 0, 0, nullptr, 0);
 	object.insert(backgroud);
+	
+	
 	// create a role
 	player = std::make_shared<Object>(TYPE_ROLE, config.role, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, nullptr, 1);
 	object.insert(player);
@@ -33,9 +38,9 @@ void Game::init(){
 	fb_update();
 }
 
-void Game::create_map(){
-	config.game_backgroud->set(mp, config.icon);
-}
+// void Game::create_map(){
+// 	config.game_backgroud->set(mp, config.icon);
+// }
 
 void Game::run(){
     task_loop();
@@ -57,9 +62,11 @@ void draw(int fb, Game *game){
 	printf("---a new frame---\n");
 	for (auto obj : game->object){
 		// to-do
-		if (obj->obj_type == TYPE_BOMB) obj->print_info();
+		
+		obj->print_info();
 		if (obj->obj_type == TYPE_ROLE) obj->move(game->mp);
 		obj->draw(game->mp);
+		if (obj->obj_type == TYPE_BACKGROUD) game->mp->draw();
 	}
 	for (auto it = game->object.begin(); it != game->object.end();){
 		if ((*it)->time_to_live == 0){

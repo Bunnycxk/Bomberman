@@ -30,7 +30,7 @@ public:
     std::set< std::shared_ptr<Object> >object;             // 用 set 维护object
     std::shared_ptr<Object> player;       // 玩家
     std::shared_ptr<Object> backgroud;    // 背景
-    std::shared_ptr<Object> bomb;        
+    // std::shared_ptr<Object> bomb;       
     std::shared_ptr<Map> mp;
 
 public:
@@ -39,7 +39,7 @@ public:
 
     void init();
     void run();
-    void create_map();
+    //void create_map();
 };
 
 void gamepad_event_cb(int fd, Game *game);

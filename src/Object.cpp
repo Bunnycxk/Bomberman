@@ -147,7 +147,6 @@ void Object::draw(std::shared_ptr<Map> mp){
                         int new_x = x + direction_dx[i], new_y = y + direction_dy[i];
                         if (new_x < 0 || new_x >= MAP_COLUMN || new_y < 0 || new_y >= MAP_ROW) continue;
                         if (mp->cell[new_y][new_x] == MAP_INDESTRUCTIBLE) continue;
-                        if ()
                         item->draw(get_pixel_x(new_x), get_pixel_y(new_y), direction_type[j == 1][i], frame_now, speed_cnt);
                     }
                 }

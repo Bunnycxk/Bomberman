@@ -55,55 +55,55 @@ Item::~Item(){
 }
 
 
-void Item::set_backgroud(std::shared_ptr<Map> mp, Item *icon){
+// void Item::set_backgroud(std::shared_ptr<Map> mp, Item *icon){
     
-    for (int i = 0; i < MAP_ROW; i++)
-    for (int j = 0; j < MAP_COLUMN; j++){     
-        int icon_type = rand();
-        action_type cell_type = ACTION_STOP;
-        switch (mp->cell[i][j])
-        {
-        case MAP_DESTRUCTIBLE:
-            cell_type = ACTION_DESTRUTIBLE;
-            break;
-        case MAP_INDESTRUCTIBLE:
-            cell_type = ACTION_INDESTRUTIBLE;
-            break;
-        case MAP_PROPS:
-            cell_type = ACTION_PROPS;
-            break;
-        case MAP_BOMB:
-            cell_type = ACTION_BOMB_CENTER;
-            break;
-        default:
-            continue;
-            break;
-        }
-        Action &icon_action = icon->action[cell_type];
-        uint size = icon_action.postion.size();
-        icon_type %= size;
-        Postion pos = icon_action.postion[icon_type];
-        //printf("%d %d\n",i,j);
-        //printf("%d %d %d %d %d\n",pos.x, pos.y, pos.w, pos.h,icon->img->line_byte);
+//     for (int i = 0; i < MAP_ROW; i++)
+//     for (int j = 0; j < MAP_COLUMN; j++){     
+//         int icon_type = rand();
+//         action_type cell_type = ACTION_STOP;
+//         switch (mp->cell[i][j])
+//         {
+//         case MAP_DESTRUCTIBLE:
+//             cell_type = ACTION_DESTRUTIBLE;
+//             break;
+//         case MAP_INDESTRUCTIBLE:
+//             cell_type = ACTION_INDESTRUTIBLE;
+//             break;
+//         case MAP_PROPS:
+//             cell_type = ACTION_PROPS;
+//             break;
+//         case MAP_BOMB:
+//             cell_type = ACTION_BOMB_CENTER;
+//             break;
+//         default:
+//             continue;
+//             break;
+//         }
+//         Action &icon_action = icon->action[cell_type];
+//         uint size = icon_action.postion.size();
+//         icon_type %= size;
+//         Postion pos = icon_action.postion[icon_type];
+//         //printf("%d %d\n",i,j);
+//         //printf("%d %d %d %d %d\n",pos.x, pos.y, pos.w, pos.h,icon->img->line_byte);
         
-        fb_image *icon_img = fb_get_sub_image(icon->img, pos.x, pos.y, pos.w, pos.h);
-        fb_image *bg_img = fb_get_sub_image(img, MAP_LEFT + j * MAP_CELL_SIZE, MAP_TOP + i * MAP_CELL_SIZE, pos.w, pos.h);
-        char *bg_ptr = bg_img->content;
-        char *icon_ptr = icon_img->content;
+//         fb_image *icon_img = fb_get_sub_image(icon->img, pos.x, pos.y, pos.w, pos.h);
+//         fb_image *bg_img = fb_get_sub_image(img, MAP_LEFT + j * MAP_CELL_SIZE, MAP_TOP + i * MAP_CELL_SIZE, pos.w, pos.h);
+//         char *bg_ptr = bg_img->content;
+//         char *icon_ptr = icon_img->content;
         
-        for (int y = 0; y < MAP_CELL_SIZE; y++){
-            for (int x = 0; x < MAP_CELL_SIZE; x++)
-                fb_mix_pixel(bg_ptr + (x << 2), icon_ptr + (x << 2));
-                // *(bg_ptr + x) = *(icon_ptr + x);
-            bg_ptr += bg_img->line_byte;
-            icon_ptr += icon_img->line_byte;
-        }
-        fb_free_image(icon_img);
-        fb_free_image(bg_img);
-        //fb_mix_pixel(MAP_LEFT + j * MAP_CELL_SIZE, MAP_TOP + i * MAP_CELL_SIZE, sub_img, 0);
-        //printf("??\n");
-    }
-}
+//         for (int y = 0; y < MAP_CELL_SIZE; y++){
+//             for (int x = 0; x < MAP_CELL_SIZE; x++)
+//                 fb_mix_pixel(bg_ptr + (x << 2), icon_ptr + (x << 2));
+//                 // *(bg_ptr + x) = *(icon_ptr + x);
+//             bg_ptr += bg_img->line_byte;
+//             icon_ptr += icon_img->line_byte;
+//         }
+//         fb_free_image(icon_img);
+//         fb_free_image(bg_img);
+//         //fb_mix_pixel(MAP_LEFT + j * MAP_CELL_SIZE, MAP_TOP + i * MAP_CELL_SIZE, sub_img, 0);
+//         //printf("??\n");
+//     }
+// }
 
 void Item::draw(int x, int y, action_type type, uint &frame_now, uint &speed_cnt){
     Action &now_action = action[type];

@@ -2,9 +2,10 @@
 #include <string>
 
 #include "../common/common.h"
+#include "Map.h"
 #include "Item.h"
 
-enum object_type {TYPE_BACKGROUD, TYPE_ROLE, TYPE_BOMB};
+enum object_type {TYPE_BACKGROUD, TYPE_ROLE, TYPE_BOMB, TYPE_MAP};
 
 class Object
 {

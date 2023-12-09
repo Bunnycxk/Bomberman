@@ -1,5 +1,6 @@
 #pragma once
 #include "../common/common.h"
+#include "Item.h"
 
 #define MAP_CELL_SIZE 64
 #define MAP_CELL_HALF (MAP_CELL_SIZE >> 1)
@@ -24,11 +25,17 @@ class Map
 {
 private:
     /* data */    
+    fb_image *img;
+    Item *item;
 public:
     uint cell[MAP_ROW][MAP_COLUMN];
-
-    Map(const char *filename);
+    
+    
+    Map(const char *filename, Item *icon);
     ~Map();
+    void set_map_cell(int x, int y, fb_image *icon_img);
+    void set_empty(int x, int y);
+    void draw();
 };
 
 
