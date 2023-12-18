@@ -365,7 +365,7 @@ void fb_draw_border(int x, int y, int w, int h, int color)
 }
 
 /** draw a text string **/
-void fb_draw_text(int x, int y, char *text, int font_size, int color)
+void fb_draw_text(int x, int y, const char *text, int font_size, int color)
 {
 	fb_image *img;
 	fb_font_info info;

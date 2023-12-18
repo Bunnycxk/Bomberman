@@ -1,3 +1,13 @@
+# 关于orangepi的有线连接
+在有网络的主机上将wifi共享，在orangepi上要配置静态ip。
+修改文件 /etc/network/interfaces，加入
+
+    auto eth0
+    iface eth0 inet static
+    address <这里填分配的ip>
+    netmask 255.255.255.0
+    gateway <这里填主机的端口ip，在主机cmd用ifconfig查>
+
 # Game
 整个游戏实体，负责控制游戏流程，切换场景等。
 

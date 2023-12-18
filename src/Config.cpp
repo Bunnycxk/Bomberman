@@ -37,19 +37,19 @@ Config::Config(/* args */){
     for (auto it = mem.begin();it != mem.end(); it++){
         printf("%s :\n", (*it).c_str());
         if ((*it) == "game_backgroud"){
-            game_backgroud = new Item(value["action_config"][*it]);
+            game_backgroud = std::make_shared<Item>(value["action_config"][*it]);
             game_backgroud->print_info();
         }else
         if ((*it) == "icon"){
-            icon = new Item(value["action_config"][*it]);
+            icon = std::make_shared<Item>(value["action_config"][*it]);
             icon->print_info();
         }else
         if ((*it) == "bomb"){
-            bomb = new Item(value["action_config"][*it]);
+            bomb = std::make_shared<Item>(value["action_config"][*it]);
             bomb->print_info();
         }else
         if ((*it) == "role"){
-            role = new Item(value["action_config"][*it]);
+            role = std::make_shared<Item>(value["action_config"][*it]);
             role->print_info();
         }
     }
@@ -57,9 +57,19 @@ Config::Config(/* args */){
 }
 
 Config::~Config(){
-    delete game_backgroud;
-    delete icon;
-    delete bomb;
-    delete role;
 }
 
+void Config::loadmap(){
+    FILE *map_file = fopen(map_filename.c_str(), "r");
+    for (int i = 0; i < MAP_ROW; i++)
+    for (int j = 0; j < MAP_COLUMN; j++)
+        fscanf(map_file, "%u", &cell[i][j]);
+     for (int i = 0; i < MAP_ROW; i++){
+        for (int j = 0; j < MAP_COLUMN; j++)
+        printf("%u ",cell[i][j]);
+        printf("\n");
+     }
+    
+    fclose(map_file);
+    
+}

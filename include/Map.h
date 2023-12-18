@@ -1,41 +1,27 @@
 #pragma once
-#include "../common/common.h"
-#include "Item.h"
-
-#define MAP_CELL_SIZE 64
-#define MAP_CELL_HALF (MAP_CELL_SIZE >> 1)
-#define MAP_ROW 8
-#define MAP_COLUMN 12
-
-#define MAP_LEFT 	224
-#define MAP_TOP 	44
-#define MAP_RIGHT   992
-#define MAP_BOTTOM 	556
-
-#define get_map_x(x) (((x) - MAP_LEFT) / MAP_CELL_SIZE)
-#define get_map_y(y) (((y) - MAP_TOP) / MAP_CELL_SIZE)
-
-#define get_pixel_x(x) ((x) * MAP_CELL_SIZE + MAP_LEFT)
-#define get_pixel_y(y) ((y) * MAP_CELL_SIZE + MAP_TOP)
-
-enum map_type {MAP_EMPTY, MAP_DESTRUCTIBLE, MAP_INDESTRUCTIBLE, MAP_PROPS, MAP_BOMB};
+#include "Object.h"
 
 
-class Map
+
+class Map : public Object
 {
 private:
     /* data */    
-    fb_image *img;
-    Item *item;
+    std::shared_ptr<Item> item;          
+    action_type act_type;                   // 当前动画类型    
+    uint frame_now;                         // 当前帧
+    uint speed_cnt;     
+    uint *cell;
 public:
-    uint cell[MAP_ROW][MAP_COLUMN];
+
+    Map(object_type type, int x, int y, std::shared_ptr<Item> icon, uint *cell);
     
-    
-    Map(const char *filename, Item *icon);
     ~Map();
-    void set_map_cell(int x, int y, fb_image *icon_img);
     void set_empty(int x, int y);
-    void draw();
+    void set_map_cell(int x, int y, fb_image *icon_img);
+    uint get_type(int x, int y);
+    void set_type(int x, int y, uint type);
+    void draw(uint *cell);
 };
 
 

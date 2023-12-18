@@ -50,9 +50,83 @@ Item::Item(Json::Value &value){
     }
 }
 
+/*
+    静态动画或文字
+*/
+Item::Item(action_type act_type, uint w, uint h){
+    action[act_type].speed = 1;
+    action[act_type].frame_num = 1;
+    switch (act_type)
+    {
+    case ACTION_STOP:
+        img = fb_new_image(FB_COLOR_RGBA_8888, w, h, 0);
+        memset(img->content, 0, img->line_byte * img->pixel_h);
+        action[act_type].type = act_type;
+        action[act_type].postion.push_back(Postion{0, 0, w, h});
+        break;
+    case ACTION_TEXT_ON:
+        break;
+    default:
+        break;
+    }
+}
 Item::~Item(){
     fb_free_image(img);
 }
+
+// void Item::set_map_cell(int x, int y, fb_image *icon_img){
+
+//     int *map_ptr =(int *) (img->content + (x * MAP_CELL_SIZE) * img->line_byte + (y * MAP_CELL_SIZE << 2)); 
+//     int *icon_ptr = NULL;   // 空图标设置为透明
+//     if (icon_img != NULL) { 
+//         icon_ptr = (int *) (icon_img->content);
+//     }
+
+//     for (int i = 0; i < MAP_CELL_SIZE; i++){
+//         for (int j = 0; j < MAP_CELL_SIZE; j++){
+//             if (icon_ptr == NULL) {
+//                 *(map_ptr + j) = 0;
+//             }else {
+//                 *(map_ptr + j) = *(icon_ptr + j);
+//             }
+//         }
+//         map_ptr += img->line_byte >> 2;
+//         if (icon_ptr !=NULL) icon_ptr += icon_img->line_byte >> 2;
+//     }
+// }
+
+// void Item::set_map(std::shared_ptr<Map> mp, Item *icon){
+//     for (int i = 0; i < MAP_ROW; i++)
+//     for (int j = 0; j < MAP_COLUMN; j++){
+//         int icon_type = rand();
+//         uint cell_type = 0;
+//         switch (mp->cell[i][j])
+//         {
+//         case MAP_DESTRUCTIBLE:
+//             cell_type = ACTION_DESTRUTIBLE;
+//             break;
+//         case MAP_INDESTRUCTIBLE:
+//             cell_type = ACTION_INDESTRUTIBLE;
+//             break;
+//         case MAP_PROPS:
+//             cell_type = ACTION_PROPS;
+//             break;
+//         case MAP_BOMB:
+//             cell_type = ACTION_BOMB_CENTER;
+//             break;
+//         default:
+//             continue;
+//             break;
+//         }
+//         Action &icon_action = icon->action[cell_type];
+//         uint size = icon_action.postion.size();
+//         icon_type %= size;
+//         Postion pos = icon_action.postion[icon_type];
+//         fb_image *icon_img = fb_get_sub_image(icon->img, pos.x, pos.y, pos.w, pos.h);
+//         set_map_cell(i, j, icon_img);
+//         fb_free_image(icon_img);
+//     }
+// }   
 
 
 // void Item::set_backgroud(std::shared_ptr<Map> mp, Item *icon){
@@ -114,10 +188,11 @@ void Item::draw(int x, int y, action_type type, uint &frame_now, uint &speed_cnt
         speed_cnt = 0;
         if (++frame_now >= now_action.frame_num) frame_now = 0;
     }
-    //printf("%d %d\n",type, frame_now);
+    printf("%d %d\n",type, frame_now);
     free(sub_img);
 }
 void Item::print_info(){
+    printf("\n");
     for (int i = 0; i < ACTION_COUNT; i++){
         auto &now = action[i];
         if (now.type == i) {
@@ -128,4 +203,5 @@ void Item::print_info(){
         }
     }
     printf("\n");
+    
 }

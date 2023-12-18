@@ -1,12 +1,12 @@
 #pragma once
 #include <set>
-#include <memory>
-#include "../common/common.h"
-#include "Gamepad.h"
-#include "Object.h"
-#include "Config.h"
-#include "Map.h"
 
+#include "../common/common.h"
+#include "Config.h"
+#include "Backgroud.h"
+#include "Role.h"
+#include "Gamepad.h"
+#include "Map.h"
 
 /*
     Game 是游戏实体
@@ -28,12 +28,12 @@ private:
 public:
     Config config;
     std::set< std::shared_ptr<Object> >object;             // 用 set 维护object
-    std::shared_ptr<Object> player;       // 玩家
-    std::shared_ptr<Object> backgroud;    // 背景
-    // std::shared_ptr<Object> bomb;       
-    std::shared_ptr<Map> mp;
-
+    std::shared_ptr<Role> player;           // 玩家
+    std::shared_ptr<Backgroud> backgroud;   // 背景
+    // std::shared_ptr<Objectbomb;       
+    std::shared_ptr<Map> mp;           // 地图
 public:
+    
     Game(/* args */);
     ~Game();
 

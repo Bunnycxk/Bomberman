@@ -1,5 +1,6 @@
 #include "../include/Game.h"
-#include "../include/task.h"
+#include "task.h"
+
 Game::Game(/* args */){
 
 }
@@ -11,22 +12,33 @@ void Game::init(){
 	
     fb_init(config.fb_filename.c_str());
 	font_init(config.font_filename.c_str());
+
 	// create a map
-	mp = std::make_shared<Map>(config.map_filename.c_str(), config.icon);
-
-	//config.game_backgroud->set_backgroud(mp, config.icon);
-
+	config.loadmap();
+	mp = std::make_shared<Map>(TYPE_MAP, MAP_LEFT, MAP_TOP, config.icon, &config.cell[0][0]);
+	object.insert(mp);
+	// mp = std::make_shared<Object>(config.map_filename.c_str());
+	// mp_obj = std::make_shared<Object>(TYPE_MAP, config.icon, MAP_LEFT, MAP_TOP, mp);
+	// mp->set_item(mp_obj->item);
+	// object.insert(mp_obj);
+	
 	// create a backgroud
-	backgroud = std::make_shared<Object>(TYPE_BACKGROUD, config.game_backgroud, 0, 0, nullptr, 0);
+	backgroud = std::make_shared<Backgroud>(TYPE_BACKGROUD, 0, 0, config.game_backgroud);
 	object.insert(backgroud);
-	
-	
+
+	// printf("%d\n",object.size());
+	// for (auto obj : object){
+	// 	obj->print_info();
+	// 	//obj->draw();
+	// }
+
 	// create a role
-	player = std::make_shared<Object>(TYPE_ROLE, config.role, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, nullptr, 1);
+	player = std::make_shared<Role>(TYPE_ROLE, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, config.role, 1);
 	object.insert(player);
 
 	// bomb = std::make_shared<Object>(TYPE_BOMB, config.bomb, MAP_LEFT, MAP_TOP);
 	// object.insert(bomb);
+
 	// 游戏手柄初始化
     gamepad_fd = gamepad_init(config.gamepad_filename.c_str()); 
     task_add_file(gamepad_fd, this, &gamepad_event_cb);
@@ -60,40 +72,47 @@ void Game::run(){
 
 void draw(int fb, Game *game){
 	printf("---a new frame---\n");
-	for (auto obj : game->object){
-		// to-do
-		
-		obj->print_info();
-		if (obj->obj_type == TYPE_ROLE) obj->move(game->mp);
-		obj->draw(game->mp);
-		if (obj->obj_type == TYPE_BACKGROUD) game->mp->draw();
-	}
+	myTime start_time = task_get_time();
+
 	for (auto it = game->object.begin(); it != game->object.end();){
-		if ((*it)->time_to_live == 0){
-			switch ((*it)->obj_type)
-			{
-			case TYPE_BOMB:
-				{
-					uint x = get_map_x((*it)->postion_x), y = get_map_y((*it)->postion_y); 
-					game->mp->cell[y][x] = 0;
-					if ((*it)->act_type == ACTION_STOP){
-						(*it)->time_to_live = 2 * FPS/10;  // 爆炸 0.2s
-						(*it)->set_action_type(ACTION_BOMB_CENTER);
-					}else {
-						it = game->object.erase(it);
-					}
-				}
-				break;
-				
-			default:
-				break;
-			}
+		(*it)->print_info();
+		// if (obj->obj_type == TYPE_ROLE) obj->move(game->mp);
+		(*it)->draw(&game->config.cell[0][0]);
+		if ((*it)->get_TTL() == 0){
+			it = game->object.erase(it);
 		}else {
 			it++;
 		}
 	}
+
+	// for (auto it = game->object.begin(); it != game->object.end();){
+	// 	if ((*it)->get_TTL() == 0){
+	// 		switch ((*it)->obj_type)
+	// 		{
+	// 		case TYPE_BOMB:
+	// 			{
+	// 				uint x = get_map_x((*it)->postion_x), y = get_map_y((*it)->postion_y); 
+	// 				game->mp->cell[y][x] = 0;
+	// 				if ((*it)->act_type == ACTION_STOP){
+	// 					(*it)->time_to_live = 2 * FPS/10;  // 爆炸 0.2s
+	// 					(*it)->set_action_type(ACTION_BOMB_CENTER);
+	// 				}else {
+	// 					it = game->object.erase(it);
+	// 				}
+	// 			}
+	// 			break;
+				
+	// 		default:
+	// 			break;
+	// 		}
+	// 	}else {
+	// 		it++;
+	// 	}
+	// }
 	fb_update();
-	printf("---------------\n");
+	myTime end_time = task_get_time();
+	printf("cost time: %d\n", end_time - start_time);
+	printf("------the frame end---------\n\n");
 }
 
 void gamepad_event_cb(int fd, Game *game){
@@ -149,7 +168,6 @@ void gamepad_event_cb(int fd, Game *game){
 		break;
 	case GAMEPAD_A_TOUCH:
 		printf("button A touch!\n");
-		//set_bomb(man);
 		{
 			auto new_bomb = game->player->set_bomb(game->mp, game->config.bomb);
 			if (new_bomb){	// 成功放置

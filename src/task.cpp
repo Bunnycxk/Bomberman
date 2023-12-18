@@ -246,7 +246,7 @@ static void _check_and_do_task(void)
 		temp = MYTIME_DIFF(ptimer->point, now);
 		if(temp <= 0) { /*已经到时间点了*/
 			ptimer->point = now + ptimer->period;
-			ptimer->callback(ptimer->period, pfile->game);
+			ptimer->callback(ptimer->period, ptimer->game);
 		}
 	}
 	return;

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Object.h"
+#include "Map.h"
 
-
-class Backgroud : public Object
+class Bomb : public Object
 {
 private:
     /* data */
@@ -11,10 +11,14 @@ private:
     action_type act_type;                   // 当前动画类型    
     uint frame_now;                         // 当前帧
     uint speed_cnt;                         // 速度计数
-
+    uint bomb_len;                          // 炸弹长度
+    std::shared_ptr<Map> mp;               
 public:
-    Backgroud(object_type type, int x, int y, std::shared_ptr<Item> init_item);
-    ~Backgroud();
+    Bomb(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint *bomb_num, uint len);
+
+    ~Bomb();
+    
     void draw(uint *cell);
 };
+
 
