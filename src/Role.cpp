@@ -1,5 +1,8 @@
 #include "../include/Role.h"
 
+const int direction_dx[] = {0, 1,  0, -1, 0};
+const int direction_dy[] = {1, 0, -1,  0, 0};
+
 Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, uint len): Object(type, x, y){
     item = init_item;
     set_priority(100);
@@ -9,8 +12,7 @@ Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, uint
     health_points = max_health_points = 100;
     act_type = ACTION_STOP;
     frame_now = speed_cnt = 0;
-
-
+    no_attack_time = 0;
 }
 
 void Role::set_action_type(action_type type){
@@ -101,7 +103,35 @@ void Role::move(uint *cell){
     }
 }
 
-void Role::draw(uint *cell){
+object_status Role::update_health(uint *cell){
+    if (no_attack_time) {
+        no_attack_time--;
+        return NORMAL;
+    }
+    int x = get_x(), y = get_y(), damage = 0;
+    // 检查上下左右是否碰到了炸弹。
+    for (int i = 0; i < 5; i++){
+        int check_x = get_map_y(y + direction_dy[i] * (MAP_CELL_HALF - 2));
+        int check_y = get_map_x(x + direction_dx[i] * (MAP_CELL_HALF - 2));
+        if (*(cell + check_x * MAP_COLUMN + check_y) == MAP_EXPLOSION){
+            damage = 1;
+            break;
+        }
+    }
+    if (damage) {
+        health_points -= 20;
+        if (health_points <=0) return DELETE;
+        no_attack_time = FPS;
+    }
+    return NORMAL;
+}
+
+object_status Role::draw(uint *cell){
     move(cell);
+    auto status = update_health(cell);
     item->draw(get_x() - MAP_CELL_HALF, get_y() - MAP_CELL_HALF, act_type, frame_now, speed_cnt);
+    char health_str[20];
+    sprintf(health_str, "%d/%d", health_points, max_health_points);
+    fb_draw_text(STATUS_LEFT, STATUS_TOP - 4, health_str, 20, COLOR_WHITE);
+    return status;
 }

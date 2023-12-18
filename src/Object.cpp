@@ -1,5 +1,7 @@
 #include "../include/Object.h"
 
+
+
 uint object_num = 0;
 
 Object::Object(object_type obj_type, int postion_x, int postion_y){
@@ -11,7 +13,6 @@ Object::Object(object_type obj_type, int postion_x, int postion_y){
 
 Object::~Object()
 {
-    printf("obj delete??\n");
 }
 
 void Object::set_priority(uint priority){

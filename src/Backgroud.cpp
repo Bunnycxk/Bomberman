@@ -10,13 +10,11 @@ Backgroud::Backgroud(object_type type, int x, int y, std::shared_ptr<Item> init_
 
 Backgroud::~Backgroud()
 {
-    printf("bg??\n");
 }
 
 
-void Backgroud::draw(uint *cell){
-    printf("??\n");
+object_status Backgroud::draw(uint *cell){
     item->print_info();
     item->draw(get_x(), get_y(), act_type, frame_now, speed_cnt);
-    
+    return NORMAL;
 }

@@ -77,11 +77,16 @@ void draw(int fb, Game *game){
 	for (auto it = game->object.begin(); it != game->object.end();){
 		(*it)->print_info();
 		// if (obj->obj_type == TYPE_ROLE) obj->move(game->mp);
-		(*it)->draw(&game->config.cell[0][0]);
-		if ((*it)->get_TTL() == 0){
+		auto status = (*it)->draw(&game->config.cell[0][0]);
+		switch (status)
+		{
+		case DELETE:
 			it = game->object.erase(it);
-		}else {
+			break;
+		
+		default:
 			it++;
+			break;
 		}
 	}
 

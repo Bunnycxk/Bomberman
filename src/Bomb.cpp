@@ -21,9 +21,8 @@ Bomb::~Bomb()
 {
 }
 
-void Bomb::draw(uint *cell){
+object_status Bomb::draw(uint *cell){
     set_TTL(get_TTL() - 1);
-    printf("%u\n", get_TTL());
     switch (act_type)
     {
     case ACTION_STOP:
@@ -42,6 +41,7 @@ void Bomb::draw(uint *cell){
             item->draw(get_x(), get_y(), ACTION_BOMB_CENTER, frame_now, speed_cnt);
             int x = get_map_x(get_x()), y = get_map_y(get_y());
             printf("map_row = %d map_column = %d\n",y,x);
+            if (get_TTL()) mp->set_type(y, x, MAP_EXPLOSION); else mp->set_type(y, x, MAP_EMPTY);
             for (int j = bomb_len; j > 0; j--){
                 for (int i = 0; i < 4; i++){
                     int new_x = x + direction_dx[i], new_y = y + direction_dy[i];
@@ -50,15 +50,15 @@ void Bomb::draw(uint *cell){
                     if (*(cell + new_y * MAP_COLUMN + new_x) == MAP_DESTRUCTIBLE) {
                         mp->set_empty(new_y, new_x);
                     }
+                    if (get_TTL()) mp->set_type(new_y, new_x, MAP_EXPLOSION); else mp->set_type(new_y, new_x, MAP_EMPTY);
                     item->draw(get_pixel_x(new_x), get_pixel_y(new_y), direction_type[j == 1][i], frame_now, speed_cnt);
-                    
                 }
             }
-
+            if (!get_TTL()) return DELETE;
         }
         break;
     default:
         break;
     }
-
+    return NORMAL;
 }

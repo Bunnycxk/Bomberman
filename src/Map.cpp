@@ -85,9 +85,10 @@ void Map::set_map_cell(int x, int y, fb_image *icon_img){
     }
 }
 
-void Map::draw(uint *cell){
+object_status Map::draw(uint *cell){
     //fb_draw_image(MAP_LEFT, MAP_TOP, img, 0);
     item->draw(get_x(), get_y(), act_type, frame_now, speed_cnt);
+    return NORMAL;
 }
 
 Map::~Map(){
