@@ -4,6 +4,7 @@
 
 Map::Map(object_type type, int x, int y, std::shared_ptr<Item> icon, uint *cell):Object(type, x, y){
     item = std::make_shared<Item>(ACTION_STOP, MAP_RIGHT - MAP_LEFT, MAP_BOTTOM - MAP_TOP);
+    this->icon = icon;
     set_priority(1);
     set_TTL(UINT32_MAX);
     act_type = ACTION_STOP;
@@ -12,7 +13,6 @@ Map::Map(object_type type, int x, int y, std::shared_ptr<Item> icon, uint *cell)
 
     for (int i = 0; i < MAP_ROW; i++)
     for (int j = 0; j < MAP_COLUMN; j++){
-        printf("%d %d\n",i,j);
         int icon_type = rand();
         uint cell_type = 0;
         switch (*(cell + i * MAP_COLUMN + j))
@@ -50,6 +50,15 @@ uint Map::get_type(int x, int y){
 void Map::set_type(int x, int y, uint type){
     *(cell + x * MAP_COLUMN + y) = type;
 }
+
+void Map::set_probs(int x, int y, uint type){
+    *(cell + x * MAP_COLUMN + y) = type + MAP_PROPS_SPEED;
+    Postion pos = icon->action[ACTION_PROPS].postion[type];
+    fb_image *icon_img = fb_get_sub_image(icon->img, pos.x, pos.y, pos.w, pos.h);
+    this->set_map_cell(x, y, icon_img);
+    fb_free_image(icon_img);
+}
+
 /*
     把地图格子 (x, y) 涂成 透明
 */

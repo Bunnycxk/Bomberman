@@ -12,6 +12,7 @@ private:
     uint frame_now;                         // 当前帧
     uint speed_cnt;                         // 速度计数
     uint bomb_len;                          // 炸弹长度
+    uint* bomb_num;                         // 
     std::shared_ptr<Map> mp;               
 public:
     Bomb(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint *bomb_num, uint len);

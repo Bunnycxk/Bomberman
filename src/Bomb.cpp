@@ -15,10 +15,12 @@ Bomb::Bomb(object_type type, int x, int y, std::shared_ptr<Item> init_item, std:
     act_type = ACTION_STOP;
     frame_now = speed_cnt = 0;
     bomb_len = len;
+    this->bomb_num = bomb_num;
 }
 
 Bomb::~Bomb()
 {
+    (*bomb_num)--;
     printf("Bomb delete!\n");
 }
 
@@ -43,16 +45,24 @@ object_status Bomb::draw(uint *cell){
             int x = get_map_x(get_x()), y = get_map_y(get_y());
             printf("map_row = %d map_column = %d\n",y,x);
             if (get_TTL()) mp->set_type(y, x, MAP_EXPLOSION); else mp->set_type(y, x, MAP_EMPTY);
-            for (int j = bomb_len; j > 0; j--){
-                for (int i = 0; i < 4; i++){
-                    int new_x = x + direction_dx[i], new_y = y + direction_dy[i];
-                    if (new_x < 0 || new_x >= MAP_COLUMN || new_y < 0 || new_y >= MAP_ROW) continue;
-                    if (*(cell + new_y * MAP_COLUMN + new_x) == MAP_INDESTRUCTIBLE) continue;
+            int v[4] = {0};
+            for (uint j = 1; j <= bomb_len; j++){
+                for (int i = 0; i < 4; i++)
+                if (!v[i]){
+                    int new_x = x + j * direction_dx[i], new_y = y + j * direction_dy[i];
+                    if (new_x < 0 || new_x >= MAP_COLUMN || new_y < 0 || new_y >= MAP_ROW) {
+                        v[i] = 1;
+                        continue;
+                    }
+                    if (*(cell + new_y * MAP_COLUMN + new_x) == MAP_INDESTRUCTIBLE) {
+                        v[i] = 1;
+                        continue;
+                    }
                     if (*(cell + new_y * MAP_COLUMN + new_x) == MAP_DESTRUCTIBLE) {
                         mp->set_empty(new_y, new_x);
                     }
                     if (get_TTL()) mp->set_type(new_y, new_x, MAP_EXPLOSION); else mp->set_type(new_y, new_x, MAP_EMPTY);
-                    item->draw(get_pixel_x(new_x), get_pixel_y(new_y), direction_type[j == 1][i], frame_now, speed_cnt);
+                    item->draw(get_pixel_x(new_x), get_pixel_y(new_y), direction_type[j == bomb_len][i], frame_now, speed_cnt);
                 }
             }
             if (!get_TTL()) return DELETE;

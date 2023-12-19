@@ -55,9 +55,13 @@ public:
 
     void switch_to_text(direction_type type);
     void switch_screen(screen_type scr);
+    
+    void generate_probs();
     //void create_map();
 };
 
 void gamepad_event_cb(int fd, Game *game);
 
 void draw(int fd, Game *game);
+
+void game_generate_probs(int fb, Game *game);

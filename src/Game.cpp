@@ -44,9 +44,11 @@ void Game::init(screen_type screen){
 			object.insert(backgroud);
 
 			// create a role
-			player = std::make_shared<Role>(TYPE_ROLE, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, config.role, 1);
+			player = std::make_shared<Role>(TYPE_ROLE, MAP_LEFT + MAP_CELL_HALF, MAP_TOP + MAP_CELL_HALF, config.role, mp, 1);
 			object.insert(player);
-			
+
+			task_add_timer(5000, this, &game_generate_probs); // 每 5s 生成一个道具
+
 			time_to_over = FPS;
 		}
 		break;
@@ -108,16 +110,42 @@ void Game::switch_to_text(direction_type type){
 	all_text[text_cur]->set_on_flag(false);
 	text_cur = (text_cur + type + TEXT_COUNT) % TEXT_COUNT;
 	all_text[text_cur]->set_on_flag(true);
-	printf("text_cur = %d \n",text_cur);
 }
 
 
 void Game::switch_screen(screen_type scr){
-	printf("in switch\n");
+	if (screen == GAMING) {
+		task_delete_timer(5000);
+	}
 	all_text.clear();
 	backgroud = nullptr;
 	init(scr);
 }
+
+void Game::generate_probs(){
+	// TO-DO 可以优化
+	int num = 0;
+	for (int i = 0, id = 0; i < MAP_ROW; i++)
+	for (int j = 0; j < MAP_COLUMN; j++, id++)
+		if (mp->cell[id] == MAP_EMPTY) num++;
+	if (num == 0) return;
+	int rand_num = (rand() % num) + 1;
+	for (int i = 0, id = 0; i < MAP_ROW; i++)
+	for (int j = 0; j < MAP_COLUMN; j++, id++)
+	if (mp->cell[id] == MAP_EMPTY && --rand_num == 0) {
+		int type = rand() % 100;
+		if (type <= 30) type = 0;else // 30% 是加速
+		if (type <= 60) type = 1;else // 30% 是回复HP
+		if (type <= 80) type = 2;else // 20% 是加一个炸弹
+		if (type <= 90) type = 3;else // 10% 是 push
+			type = 4;				  // 10% 是 len++
+
+		mp->set_probs(i, j, type);
+		return;
+	}
+	return;
+}
+
 /*
     画图函数，负责将所有Object画出
 	由于静态成员函数不能访问非静态成员，所以把Game*传给这个函数，所以需要魔改一下task.c
@@ -130,14 +158,16 @@ void Game::switch_screen(screen_type scr){
 
 void draw(int fb, Game *game){
 
-
-	if (game->get_screen() == GAMING && game->player == nullptr){
-		if (--game->time_to_over == 0){
-			game->switch_screen(GAME_OVER);
-			return;
+	if (game->get_screen() == GAMING){
+		if (game->player == nullptr){
+			if (--game->time_to_over == 0){
+				game->switch_screen(GAME_OVER);
+				return;
+			}
 		}
 	}
 
+	
 	printf("---a new frame---\n");
 	myTime start_time = task_get_time();
 
@@ -230,42 +260,42 @@ void gamepad_event_cb(int fd, Game *game){
 		{
 		case GAMEPAD_LEFT_BUTTON_TOUCH:
 			printf("left touch !\n");
-			game->player->set_move(-1, 0, 8);
+			game->player->set_move(-1, 0);
 			//role_set_direction(man, -1, 0);
 			break;
 		case GAMEPAD_RIGHT_BUTTON_TOUCH:
 			printf("right touch !\n");
-			game->player->set_move(1, 0, 8);
+			game->player->set_move(1, 0);
 			//role_set_direction(man, 1, 0);
 			break;
 		case GAMEPAD_LEFT_BUTTON_RELEASE:
 			printf("left release !\n");
-			game->player->set_move(0, 0, 8);
+			game->player->set_move(0, 0);
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_RIGHT_BUTTON_RELEASE:
 			printf("right release !\n");
-			game->player->set_move(0, 0, 8);
+			game->player->set_move(0, 0);
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_UP_BUTTON_TOUCH:
 			printf("up touch !\n");
-			game->player->set_move(0, -1, 8);
+			game->player->set_move(0, -1);
 			//role_set_direction(man, 0, -1);
 			break;
 		case GAMEPAD_DOWN_BUTTON_TOUCH:
 			printf("down touch !\n");
-			game->player->set_move(0, 1, 8);
+			game->player->set_move(0, 1);
 			//role_set_direction(man, 0, 1);
 			break;
 		case GAMEPAD_UP_BUTTON_RELEASE:
 			printf("up release !\n");
-			game->player->set_move(0, 0, 8);
+			game->player->set_move(0, 0);
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_DOWN_BUTTON_RELEASE:
 			printf("down release !\n");
-			game->player->set_move(0, 0, 8);
+			game->player->set_move(0, 0);
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_ERROR:
@@ -302,4 +332,8 @@ void gamepad_event_cb(int fd, Game *game){
 	}
 	
 	return;
+}
+
+void game_generate_probs(int fb, Game *game){
+	game->generate_probs();
 }

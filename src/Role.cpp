@@ -3,16 +3,18 @@
 const int direction_dx[] = {0, 1,  0, -1, 0};
 const int direction_dy[] = {1, 0, -1,  0, 0};
 
-Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, uint len): Object(type, x, y){
+Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint len): Object(type, x, y){
     item = init_item;
+    this->mp = mp;
     set_priority(100);
     set_TTL(UINT32_MAX);
-    max_bomb_num = 100, now_bomb_num = 0;
+    max_bomb_num = 1, now_bomb_num = 0;
     bomb_len = len;
     health_points = max_health_points = 100;
     act_type = ACTION_STOP;
     frame_now = speed_cnt = 0;
     no_attack_time = 0;
+    move_speed = 8;
 }
 
 void Role::set_action_type(action_type type){
@@ -20,8 +22,8 @@ void Role::set_action_type(action_type type){
     frame_now = speed_cnt = 0;
 }
 
-void Role::set_move(int dx, int dy, int speed){
-    move_dx = dx, move_dy = dy, move_speed = speed;
+void Role::set_move(int dx, int dy){
+    move_dx = dx, move_dy = dy;
     if (dx || dy){
         set_action_type(ACTION_MOVE);
     }else {
@@ -104,12 +106,10 @@ void Role::move(uint *cell){
 }
 
 object_status Role::update_health(uint *cell){
-    printf("attack!!!\n");
     if (no_attack_time) {
         no_attack_time--;
         return NORMAL;
     }
-    printf("health\n");
     int x = get_x(), y = get_y(), damage = 0;
     // 检查上下左右是否碰到了炸弹。
     for (int i = 0; i < 5; i++){
@@ -120,7 +120,6 @@ object_status Role::update_health(uint *cell){
             break;
         }
     }
-    printf("damage = %d\n",damage);
     if (damage) {
         health_points -= 20;
         if (health_points <=0) return DELETE;
@@ -129,18 +128,56 @@ object_status Role::update_health(uint *cell){
     return NORMAL;
 }
 
-// void Role::update_probs(uint *cell){
-//     int x = get_map_x(get_x()), y = get_map_y(get_y());
-//     if (*(cell + y * MAP_COLUMN + x) == )
-// }
+void Role::update_probs(uint *cell){
+    for (int i = 0; i < MAP_ROW; i++){
+        for (int j = 0; j < MAP_COLUMN; j++)
+        printf("%d ",*(cell + i * MAP_COLUMN + j));
+        printf("\n");
+    }
+    int x = get_map_x(get_x()), y = get_map_y(get_y());
+    
+
+    uint &type = *(cell + y * MAP_COLUMN + x);
+    printf("type = %u\n", type);
+    switch (type)
+    {
+    case MAP_PROPS_SPEED:
+        move_speed += 4;
+        printf("Speed!\n");
+        break;
+    case MAP_PROBS_HEALTH:
+        /* code */
+        
+        printf("HP!\n");
+        health_points +=20;
+
+        if (health_points > max_health_points) health_points = max_health_points;
+        break;
+    case MAP_PROBS_BOMB:
+        printf("bomb_num\n");
+        max_bomb_num ++;
+        break;
+    case MAP_PROBS_PUSH:
+        // TO-DO
+        break;
+    case MAP_PROBS_ATTACK:
+        bomb_len ++;
+        break;
+    default:
+        break;
+    }
+    mp->set_empty(y, x);
+}
 
 object_status Role::draw(uint *cell){
     move(cell);
     auto status = update_health(cell);
-    //update_probs(cell);
+    update_probs(cell);
     item->draw(get_x() - MAP_CELL_HALF, get_y() - MAP_CELL_HALF, act_type, frame_now, speed_cnt);
-    char health_str[20];
-    sprintf(health_str, "%d/%d", health_points, max_health_points);
-    fb_draw_text(STATUS_LEFT, STATUS_TOP - 4, health_str, 20, COLOR_WHITE);
+    char str[20];
+    sprintf(str, "%d/%d", health_points, max_health_points);
+    fb_draw_text(STATUS_LEFT, STATUS_TOP - 4, str, 20, COLOR_WHITE);
+    sprintf(str, "%d %d %d", max_bomb_num, bomb_len, move_speed);
+    fb_draw_text(STATUS_LEFT, STATUS_TOP + 30, str, 15, COLOR_WHITE);
     return status;
 }

@@ -21,16 +21,17 @@ private:
     action_type act_type;           // 当前动画类型  
     uint frame_now;                 // 当前帧
     uint speed_cnt;                 // 速度计数
-
+    std::shared_ptr<Map> mp;
 public:
-    Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, uint len);
+    Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint len);
     ~Role();
 
     object_status draw(uint *cell);
     void move(uint *cell);
     object_status update_health(uint *cell);
     void set_action_type(action_type type);
-    void set_move(int dx, int dy, int speed);
+    void update_probs(uint *cell);
+    void set_move(int dx, int dy);
     std::shared_ptr<Bomb> set_bomb(std::shared_ptr<Map> mp, std::shared_ptr<Item> bomb);
 };
 
