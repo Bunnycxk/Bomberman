@@ -10,6 +10,7 @@ Backgroud::Backgroud(object_type type, int x, int y, std::shared_ptr<Item> init_
 
 Backgroud::~Backgroud()
 {
+    printf("Backgroud delete\n");
 }
 
 

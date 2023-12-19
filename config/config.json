@@ -1,8 +1,23 @@
 {
     "action_config" :
     {
-        "game_backgroud":{
-            "image_url" : "./resource/image/backgroud/game_backgroud.jpg",
+        "gaming_backgroud":{
+            "image_url" : "./resource/image/backgroud/gaming_backgroud.jpg",
+            "image_type" : "jpg",
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x" : [0],
+                    "y" : [0],
+                    "width" : [1024],
+                    "height" : [600]
+                }
+            ]
+        },
+        "gamestart_backgroud":{
+            "image_url" : "./resource/image/backgroud/gamestart_backgroud.jpg",
             "image_type" : "jpg",
             "action" : [
                 {

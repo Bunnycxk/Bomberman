@@ -36,9 +36,13 @@ Config::Config(/* args */){
     mem = value["action_config"].getMemberNames();
     for (auto it = mem.begin();it != mem.end(); it++){
         printf("%s :\n", (*it).c_str());
-        if ((*it) == "game_backgroud"){
-            game_backgroud = std::make_shared<Item>(value["action_config"][*it]);
-            game_backgroud->print_info();
+        if ((*it) == "gaming_backgroud"){
+            gaming_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+            gaming_backgroud->print_info();
+        }else
+        if ((*it) == "gamestart_backgroud"){
+            gamestart_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+            gamestart_backgroud->print_info();
         }else
         if ((*it) == "icon"){
             icon = std::make_shared<Item>(value["action_config"][*it]);

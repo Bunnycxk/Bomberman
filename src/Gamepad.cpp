@@ -79,28 +79,34 @@ int gamepad_read(int gamepad_fd)
         switch (data.code)
         {
         case BTN_TRIGGER:
-            if (data.value == 0) 
+            if (data.value) 
                 return GAMEPAD_X_TOUCH;
             else
                 return GAMEPAD_X_RELEASE;
             break;
         case BTN_TOP:
-            if (data.value == 0) 
+            if (data.value) 
                 return GAMEPAD_Y_TOUCH;
             else
                 return GAMEPAD_Y_RELEASE;
             break;
         case BTN_THUMB:
-            if (data.value == 0) 
+            if (data.value) 
                 return GAMEPAD_A_TOUCH;
             else
                 return GAMEPAD_A_RELEASE;
             break;
         case BTN_THUMB2:
-            if (data.value == 0) 
+            if (data.value) 
                 return GAMEPAD_B_TOUCH;
             else
                 return GAMEPAD_B_RELEASE;
+            break;
+        case BTN_BASE3:
+            if (data.value) 
+                return GAMEPAD_SELECT_TOUCH;
+            else
+                return GAMEPAD_SELECT_RELEASE;
             break;
         default:
             break;

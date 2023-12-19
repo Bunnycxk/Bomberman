@@ -35,6 +35,7 @@ public:
     ~Item();
     void print_info();
     void draw(int x, int y, action_type type, uint &frame_num, uint &speed_cnt);
+    void draw(int x, int y, const char *content, int font_size, int color);
     //void set_map_cell(int x, int y, fb_image *icon_img);
     //void set_map(std::shared_ptr<Map> mp, Item *icon);
     //void set_backgroud(std::shared_ptr<Map> mp, Item *icon);

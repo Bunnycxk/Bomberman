@@ -16,6 +16,7 @@ private:
     uint now_bomb_num;                    // 当前已经放置的炸弹数
     uint bomb_len;                        // 炸弹长度
     int health_points, max_health_points; // 生命值
+    uint no_attack_time;                  // 无敌时间 
     std::shared_ptr<Item> item;          
     action_type act_type;           // 当前动画类型  
     uint frame_now;                 // 当前帧
@@ -25,9 +26,9 @@ public:
     Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, uint len);
     ~Role();
 
-    void draw(uint *cell);
+    object_status draw(uint *cell);
     void move(uint *cell);
-
+    object_status update_health(uint *cell);
     void set_action_type(action_type type);
     void set_move(int dx, int dy, int speed);
     std::shared_ptr<Bomb> set_bomb(std::shared_ptr<Map> mp, std::shared_ptr<Item> bomb);

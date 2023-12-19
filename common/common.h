@@ -35,8 +35,12 @@
 #define get_pixel_x(x) ((x) * MAP_CELL_SIZE + MAP_LEFT)
 #define get_pixel_y(y) ((y) * MAP_CELL_SIZE + MAP_TOP)
 
-enum map_type {MAP_EMPTY, MAP_DESTRUCTIBLE, MAP_INDESTRUCTIBLE, MAP_PROPS, MAP_BOMB};
+enum map_type {MAP_EMPTY, MAP_DESTRUCTIBLE, MAP_INDESTRUCTIBLE, MAP_PROPS_SPEED, MAP_PROBS_HEALTH, MAP_PROBS_BOMB, MAP_PROBS_PUSH, MAP_PROBS_ATTACK, MAP_BOMB, MAP_BRUST, MAP_EXPLOSION};
 
+#define NAME_TOP 52
+#define AVATAR_TOP 92
+#define STATUS_TOP 220
+#define STATUS_LEFT 48
 
 /*======================== task.c ============================*/
 
@@ -55,6 +59,9 @@ extern "C" {
 #define FB_COLOR_RGB_8880	1
 #define FB_COLOR_RGBA_8888	2
 #define FB_COLOR_ALPHA_8	3
+
+#define COLOR_WHITE FB_COLOR(255,255,255)
+#define COLOR_BLACK FB_COLOR(0,0,0)
 
 #ifdef __cplusplus
 extern "C" {

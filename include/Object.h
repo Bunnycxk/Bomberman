@@ -4,7 +4,8 @@
 #include "../common/common.h"
 #include "Item.h"
 
-enum object_type {TYPE_BACKGROUD, TYPE_ROLE, TYPE_BOMB, TYPE_MAP, TYPE_HEALTH};
+enum object_type {TYPE_BACKGROUD, TYPE_ROLE, TYPE_BOMB, TYPE_MAP, TYPE_TEXT, TYPE_HEALTH};
+enum object_status {NORMAL, DELETE};
 
 class Object
 {
@@ -29,7 +30,7 @@ public:
     int get_y();
     void set_y(int y);
 
-    
+    object_type get_obj_type();
 
     void print_info();
     friend bool operator <(const std::shared_ptr<Object>& left, const std::shared_ptr<Object>& right){
@@ -39,7 +40,7 @@ public:
         return left->id < right->id;
     }
     
-    virtual void draw(uint *cell)=0;
+    virtual object_status draw(uint *cell)=0;
     //virtual void set_move(int dx, int dy, int speed)=0;
 };
 

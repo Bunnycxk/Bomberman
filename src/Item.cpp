@@ -65,13 +65,15 @@ Item::Item(action_type act_type, uint w, uint h){
         action[act_type].postion.push_back(Postion{0, 0, w, h});
         break;
     case ACTION_TEXT_ON:
+    case ACTION_TEXT_OFF:
+        img = NULL;
         break;
     default:
         break;
     }
 }
 Item::~Item(){
-    fb_free_image(img);
+    if (img) fb_free_image(img);
 }
 
 // void Item::set_map_cell(int x, int y, fb_image *icon_img){
@@ -191,6 +193,11 @@ void Item::draw(int x, int y, action_type type, uint &frame_now, uint &speed_cnt
     printf("%d %d\n",type, frame_now);
     free(sub_img);
 }
+
+void Item::draw(int x, int y, const char *content, int font_size, int color){
+    fb_draw_text(x, y, content, font_size, color);
+}
+
 void Item::print_info(){
     printf("\n");
     for (int i = 0; i < ACTION_COUNT; i++){

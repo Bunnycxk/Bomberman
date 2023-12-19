@@ -19,6 +19,7 @@ Bomb::Bomb(object_type type, int x, int y, std::shared_ptr<Item> init_item, std:
 
 Bomb::~Bomb()
 {
+    printf("Bomb delete!\n");
 }
 
 object_status Bomb::draw(uint *cell){

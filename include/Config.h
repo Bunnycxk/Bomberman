@@ -13,7 +13,8 @@ private:
     /* data */
 
 public:
-    std::shared_ptr<Item> game_backgroud;
+    std::shared_ptr<Item> gaming_backgroud;
+    std::shared_ptr<Item> gamestart_backgroud;
     std::shared_ptr<Item> icon;
     std::shared_ptr<Item> bomb;
     std::shared_ptr<Item> role;

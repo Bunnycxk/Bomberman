@@ -40,6 +40,10 @@ uint Object::get_TTL(){
     return time_to_live;
 }
 
+object_type Object::get_obj_type(){
+    return obj_type;
+}
+
 void Object::print_info(){
     switch (obj_type)
     {

@@ -27,7 +27,7 @@ INCLUDE := -I./common/external/include -I./common -I./include
 
 LIBS := -L./common/external/lib -ljpeg -lfreetype -lpng -lasound -lz -lc -lm -ljsoncpp
 
-DEBUG_FLAG := $(CFLAGS)
+DEBUG_FLAG := -g $(CFLAGS)
 
 %.o : %.cpp
 

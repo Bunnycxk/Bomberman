@@ -1,5 +1,5 @@
 #pragma once
-#include "input.h"
+#include "../common/external/include/input.h"
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -23,6 +23,8 @@
 #define GAMEPAD_A_RELEASE 13
 #define GAMEPAD_B_TOUCH 14
 #define GAMEPAD_B_RELEASE 15
+#define GAMEPAD_SELECT_TOUCH 16
+#define GAMEPAD_SELECT_RELEASE 17
 #define GAMEPAD_ERROR 254
 #define GAMEPAD_NO_EVENT 255
 

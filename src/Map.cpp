@@ -23,9 +23,6 @@ Map::Map(object_type type, int x, int y, std::shared_ptr<Item> icon, uint *cell)
         case MAP_INDESTRUCTIBLE:
             cell_type = ACTION_INDESTRUTIBLE;
             break;
-        case MAP_PROPS:
-            cell_type = ACTION_PROPS;
-            break;
         case MAP_BOMB:
             cell_type = ACTION_BOMB_CENTER;
             break;

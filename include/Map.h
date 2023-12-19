@@ -21,7 +21,7 @@ public:
     void set_map_cell(int x, int y, fb_image *icon_img);
     uint get_type(int x, int y);
     void set_type(int x, int y, uint type);
-    void draw(uint *cell);
+    object_status draw(uint *cell);
 };
 
 

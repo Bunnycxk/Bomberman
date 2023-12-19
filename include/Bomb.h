@@ -18,7 +18,7 @@ public:
 
     ~Bomb();
     
-    void draw(uint *cell);
+    object_status draw(uint *cell);
 };
 
 

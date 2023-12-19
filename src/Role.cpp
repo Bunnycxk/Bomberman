@@ -104,10 +104,12 @@ void Role::move(uint *cell){
 }
 
 object_status Role::update_health(uint *cell){
+    printf("attack!!!\n");
     if (no_attack_time) {
         no_attack_time--;
         return NORMAL;
     }
+    printf("health\n");
     int x = get_x(), y = get_y(), damage = 0;
     // 检查上下左右是否碰到了炸弹。
     for (int i = 0; i < 5; i++){
@@ -118,6 +120,7 @@ object_status Role::update_health(uint *cell){
             break;
         }
     }
+    printf("damage = %d\n",damage);
     if (damage) {
         health_points -= 20;
         if (health_points <=0) return DELETE;
@@ -126,9 +129,15 @@ object_status Role::update_health(uint *cell){
     return NORMAL;
 }
 
+// void Role::update_probs(uint *cell){
+//     int x = get_map_x(get_x()), y = get_map_y(get_y());
+//     if (*(cell + y * MAP_COLUMN + x) == )
+// }
+
 object_status Role::draw(uint *cell){
     move(cell);
     auto status = update_health(cell);
+    //update_probs(cell);
     item->draw(get_x() - MAP_CELL_HALF, get_y() - MAP_CELL_HALF, act_type, frame_now, speed_cnt);
     char health_str[20];
     sprintf(health_str, "%d/%d", health_points, max_health_points);

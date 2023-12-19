@@ -15,6 +15,6 @@ private:
 public:
     Backgroud(object_type type, int x, int y, std::shared_ptr<Item> init_item);
     ~Backgroud();
-    void draw(uint *cell);
+    object_status draw(uint *cell);
 };
 
