@@ -21,7 +21,7 @@ int gamepad_read(int gamepad_fd)
 		printf("gamepad_read error %d, errno=%d\n", n, errno);
 		return GAMEPAD_ERROR;
 	}
-	printf("event read: type-code-value = %d-%d-%d\n", data.type, data.code, data.value);
+	//printf("event read: type-code-value = %d-%d-%d\n", data.type, data.code, data.value);
 	switch (data.type)
     {
     case EV_ABS:

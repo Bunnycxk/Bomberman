@@ -21,7 +21,7 @@ public:
     ~Object();
 
     void set_priority(uint priority);
-    
+    uint get_obj_id();
     uint get_TTL();
     void set_TTL(uint TTL);
 

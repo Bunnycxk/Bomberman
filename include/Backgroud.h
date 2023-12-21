@@ -16,5 +16,8 @@ public:
     Backgroud(object_type type, int x, int y, std::shared_ptr<Item> init_item);
     ~Backgroud();
     object_status draw(uint *cell);
+    void draw_track(int x1, int y1, int x2, int y2, int color);
+    void draw_track(int x1, int y1, int color);
+    void draw_rect(int x1, int y1, int x2, int y2, int color);
 };
 

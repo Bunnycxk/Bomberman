@@ -190,7 +190,7 @@ void Item::draw(int x, int y, action_type type, uint &frame_now, uint &speed_cnt
         speed_cnt = 0;
         if (++frame_now >= now_action.frame_num) frame_now = 0;
     }
-    printf("%d %d\n",type, frame_now);
+    //printf("%d %d\n",type, frame_now);
     free(sub_img);
 }
 

@@ -44,6 +44,10 @@ object_type Object::get_obj_type(){
     return obj_type;
 }
 
+uint Object::get_obj_id(){
+    return id;
+}
+
 void Object::print_info(){
     switch (obj_type)
     {

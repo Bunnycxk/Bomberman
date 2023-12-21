@@ -8,9 +8,9 @@
 #include "Text.h"
 #include "Gamepad.h"
 #include "Map.h"
+#include "Bluetooth.h"
 
-
-enum screen_type {GAME_START, GAMING, GAME_OVER};
+enum screen_type {GAME_START, GAME_MENU, GAMING, GAME_OVER, GAME_ROOM};
 
 enum game_start_text {ONE_PLAYER, CREATE_ROOM, JOIN_ROOM, TEXT_COUNT};
 
@@ -26,19 +26,29 @@ enum direction_type {DIRECTION_UP = -1, DIRECTION_DOWN = 1};
             状态栏可能发现变化
         5. 
 */
+
 class Game
 {
 private:
     /* data */
     int gamepad_fd;                     // 游戏手柄的文件句柄
-    std::vector<std::shared_ptr<Text>> all_text;
-    int text_cur;                            // 当前选择文字
+    int touch_fd;                       // 触摸屏的文件句柄
+    std::vector<std::shared_ptr<Text>> all_room;    // 房间
+    int room_cur;                            // 当前选择房间
+    int room_num;                   
     screen_type screen;                      // 游戏场景
-    
+
 public:
+    int bluetooth_fd[4];                // 蓝牙句柄
+    bool join_player[4];
+    Bluetooth bluetooth;                             
+
+    int player_num, max_player_num;                         // 玩家个数
+    uint my_id;         
+    bool is_server;                          // 是否是服务器
     Config config;
     std::set< std::shared_ptr<Object> >object;             // 用 set 维护object
-    std::shared_ptr<Role> player;            // 玩家
+    std::shared_ptr<Role> player[4];            // 玩家
     std::shared_ptr<Backgroud> backgroud;    // 背景
     // std::shared_ptr<Objectbomb;       
     std::shared_ptr<Map> mp;                 // 地图
@@ -51,17 +61,26 @@ public:
     void init(screen_type screen);
     void run();
     screen_type get_screen();
-    int get_text_cur();
-
-    void switch_to_text(direction_type type);
+    int get_room_cur();
+    int get_room_num();
+    void set_room_cur(int data);
+    // void switch_to_text(direction_type type);
     void switch_screen(screen_type scr);
     
     void generate_probs();
+
+    void room_flush();
     //void create_map();
 };
 
 void gamepad_event_cb(int fd, Game *game);
 
+void touch_event_cb(int fd, Game *game);
+
 void draw(int fd, Game *game);
 
-void game_generate_probs(int fb, Game *game);
+void game_generate_probs(int fd, Game *game);
+
+void listen_rfcomm_file(int fd, Game *game);
+
+void bluetooth_event_cb(int fd, Game *game);

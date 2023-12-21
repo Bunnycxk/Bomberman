@@ -12,8 +12,8 @@ void task_delay(myTime msecs);
 
 typedef void (*Task_Func)(int arg, Game* game); /*用户的回调函数*/
 
-#define FILE_NUM_MAX    4	/*最多add的文件任务个数*/
-#define TIMER_NUM_MAX   4	/*最多add的定时器任务个数*/
+#define FILE_NUM_MAX    6	/*最多add的文件任务个数*/
+#define TIMER_NUM_MAX   6	/*最多add的定时器任务个数*/
 
 /*添加一个文件任务, 当fd可读时, 会自动调用callback函数*/
 void task_add_file(int fd, Game *game, Task_Func callback);

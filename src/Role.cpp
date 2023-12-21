@@ -3,7 +3,7 @@
 const int direction_dx[] = {0, 1,  0, -1, 0};
 const int direction_dy[] = {1, 0, -1,  0, 0};
 
-Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint len): Object(type, x, y){
+Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint len, int id): Object(type, x, y){
     item = init_item;
     this->mp = mp;
     set_priority(100);
@@ -14,7 +14,8 @@ Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std:
     act_type = ACTION_STOP;
     frame_now = speed_cnt = 0;
     no_attack_time = 0;
-    move_speed = 8;
+    move_speed = 2;
+    player_id = id;
 }
 
 void Role::set_action_type(action_type type){
@@ -49,6 +50,7 @@ Role::~Role()
 }
 
 void Role::move(uint *cell){
+    if (mp == nullptr) return;
     if (move_dx || move_dy){
         int postion_x = get_x(), postion_y = get_y();
         int x = postion_x + move_dx * move_speed, y = postion_y + move_dy * move_speed;
@@ -106,6 +108,7 @@ void Role::move(uint *cell){
 }
 
 object_status Role::update_health(uint *cell){
+    if (mp == nullptr) return NORMAL;
     if (no_attack_time) {
         no_attack_time--;
         return NORMAL;
@@ -129,6 +132,7 @@ object_status Role::update_health(uint *cell){
 }
 
 void Role::update_probs(uint *cell){
+    if (mp == nullptr) return;
     for (int i = 0; i < MAP_ROW; i++){
         for (int j = 0; j < MAP_COLUMN; j++)
         printf("%d ",*(cell + i * MAP_COLUMN + j));
@@ -136,13 +140,13 @@ void Role::update_probs(uint *cell){
     }
     int x = get_map_x(get_x()), y = get_map_y(get_y());
     
-
     uint &type = *(cell + y * MAP_COLUMN + x);
     printf("type = %u\n", type);
     switch (type)
     {
     case MAP_PROPS_SPEED:
-        move_speed += 4;
+        move_speed += 2;
+        if (move_speed > 16) move_speed = 16;
         printf("Speed!\n");
         break;
     case MAP_PROBS_HEALTH:
@@ -170,6 +174,10 @@ void Role::update_probs(uint *cell){
 }
 
 object_status Role::draw(uint *cell){
+    if (mp == nullptr) {
+        item->draw(get_x() - MAP_CELL_HALF, get_y() - MAP_CELL_HALF, act_type, frame_now, speed_cnt);
+        return NORMAL;
+    }
     move(cell);
     auto status = update_health(cell);
     update_probs(cell);

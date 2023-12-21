@@ -81,8 +81,7 @@ typedef struct {
 	Game *game;
 } myTimer;
 
-#define FILE_NUM_MAX	4
-#define TIMER_NUM_MAX	4
+
 static myFile files[FILE_NUM_MAX];
 static myTimer timers[TIMER_NUM_MAX];
 

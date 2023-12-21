@@ -31,6 +31,66 @@
                 }
             ]
         },
+        "win_backgroud":{
+            "image_url" : "./resource/image/backgroud/win_backgroud.png",
+            "image_type" : "png",
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x" : [0],
+                    "y" : [0],
+                    "width" : [1024],
+                    "height" : [600]
+                }
+            ]
+        },
+        "lose_backgroud":{
+            "image_url" : "./resource/image/backgroud/lose_backgroud.png",
+            "image_type" : "png",
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x" : [0],
+                    "y" : [0],
+                    "width" : [1024],
+                    "height" : [600]
+                }
+            ]
+        },
+        "room_backgroud":{
+            "image_url" : "./resource/image/backgroud/room_backgroud.jpg",
+            "image_type" : "jpg",
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x" : [0],
+                    "y" : [0],
+                    "width" : [1024],
+                    "height" : [600]
+                }
+            ]
+        },
+        "gamemenu_backgroud":{
+            "image_url" : "./resource/image/backgroud/gamemenu_backgroud.jpg",
+            "image_type" : "jpg",
+            "action" : [
+                {
+                    "action_type" : "stop",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x" : [0],
+                    "y" : [0],
+                    "width" : [1024],
+                    "height" : [600]
+                }
+            ]
+        },
         "icon":{
             "image_url" : "./resource/image/icon/icon.png",
             "image_type" : "png",
@@ -192,6 +252,7 @@
         "fb_file" : "/dev/fb0",
         "font_file" : "./resource/font.ttc",
         "gamepad_file" : "/dev/input/event3",
-        "map_file" : "./config/map/map0.txt"        
+        "map_file" : "./config/map/map0.txt",
+        "touch_file" : "/dev/input/event1"
     }
 }

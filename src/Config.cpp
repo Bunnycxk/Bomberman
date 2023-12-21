@@ -1,5 +1,6 @@
 #include "../include/Config.h"
 
+
 Config::Config(/* args */){
     std::ifstream ifs;
     ifs.open("./config/config.json");
@@ -26,6 +27,9 @@ Config::Config(/* args */){
         }else
         if ((*it) == "map_file"){
             map_filename = value["file_config"][*it].asCString();
+        }else
+        if ((*it) == "touch_file"){
+            touch_filename = value["file_config"][*it].asCString();
         }
     }
 
@@ -36,26 +40,45 @@ Config::Config(/* args */){
     mem = value["action_config"].getMemberNames();
     for (auto it = mem.begin();it != mem.end(); it++){
         printf("%s :\n", (*it).c_str());
-        if ((*it) == "gaming_backgroud"){
-            gaming_backgroud = std::make_shared<Item>(value["action_config"][*it]);
-            gaming_backgroud->print_info();
-        }else
-        if ((*it) == "gamestart_backgroud"){
-            gamestart_backgroud = std::make_shared<Item>(value["action_config"][*it]);
-            gamestart_backgroud->print_info();
-        }else
-        if ((*it) == "icon"){
-            icon = std::make_shared<Item>(value["action_config"][*it]);
-            icon->print_info();
-        }else
-        if ((*it) == "bomb"){
-            bomb = std::make_shared<Item>(value["action_config"][*it]);
-            bomb->print_info();
-        }else
-        if ((*it) == "role"){
-            role = std::make_shared<Item>(value["action_config"][*it]);
-            role->print_info();
-        }
+        item_map[*it] = std::make_shared<Item>(value["action_config"][*it]);
+        item_map[*it]->print_info();
+        // if ((*it) == "gaming_backgroud"){
+        //     mp[]
+        //     gaming_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+        //     gaming_backgroud->print_info();
+        // }else
+        // if ((*it) == "gamestart_backgroud"){
+        //     gamestart_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+        //     gamestart_backgroud->print_info();
+        // }else
+        // if ((*it) == "win_backgroud"){
+        //     win_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+        //     win_backgroud->print_info();
+        // }else
+        // if ((*it) == "lose_backgroud"){
+        //     lose_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+        //     lose_backgroud->print_info();
+        // }else
+        // if ((*it) == "createroom_backgroud"){
+        //     createroom_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+        //     createroom_backgroud->print_info();
+        // }else 
+        // if ((*it) == "joinroom_backgroud"){
+        //     joinroom_backgroud = std::make_shared<Item>(value["action_config"][*it]);
+        //     joinroom_backgroud->print_info();
+        // }else 
+        // if ((*it) == "icon"){
+        //     icon = std::make_shared<Item>(value["action_config"][*it]);
+        //     icon->print_info();
+        // }else
+        // if ((*it) == "bomb"){
+        //     bomb = std::make_shared<Item>(value["action_config"][*it]);
+        //     bomb->print_info();
+        // }else
+        // if ((*it) == "role"){
+        //     role = std::make_shared<Item>(value["action_config"][*it]);
+        //     role->print_info();
+        // }
     }
 
 }

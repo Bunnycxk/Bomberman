@@ -18,12 +18,15 @@ private:
     int health_points, max_health_points; // 生命值
     uint no_attack_time;                  // 无敌时间 
     std::shared_ptr<Item> item;          
+    std::shared_ptr<Item> icon;           // 头像 
     action_type act_type;           // 当前动画类型  
     uint frame_now;                 // 当前帧
     uint speed_cnt;                 // 速度计数
     std::shared_ptr<Map> mp;
+    
 public:
-    Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint len);
+    int player_id;                  // 角色id
+    Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std::shared_ptr<Map> mp, uint len, int id);
     ~Role();
 
     object_status draw(uint *cell);

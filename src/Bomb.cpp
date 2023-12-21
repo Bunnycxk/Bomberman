@@ -11,7 +11,7 @@ Bomb::Bomb(object_type type, int x, int y, std::shared_ptr<Item> init_item, std:
     item = init_item;
     this->mp = mp;
     set_priority(3);
-    set_TTL(FPS);       // 炸弹 1s 后爆炸
+    set_TTL(FPS * 4);       // 炸弹 4s 后爆炸
     act_type = ACTION_STOP;
     frame_now = speed_cnt = 0;
     bomb_len = len;

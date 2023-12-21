@@ -27,3 +27,12 @@ object 是场景中的某些贴图，包含位置信息和一个Item。
     sudo apt update
     sudo apt-get install libjsoncpp-dev
 
+
+# Bluetooth programming
+找到一个蓝牙编程的[教程](https://people.csail.mit.edu/albert/bluez-intro/index.html)
+
+系统已经安装了bluez，但是没有bluetooth的相关库。
+
+    sudo apt-get install libbluetooth-dev
+
+安装库文件。

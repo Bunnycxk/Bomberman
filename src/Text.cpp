@@ -1,7 +1,7 @@
 #include "../include/Text.h"
 
 
-Text::Text(object_type type, int x, int y, std::string &content, int font_size, int color, bool flag):Object(type, x, y){
+Text::Text(object_type type, int x, int y, const std::string &content, int font_size, int color, bool flag):Object(type, x, y){
     printf("TEXT NOW CREATE %s\n",content.c_str());
     set_priority(1);
     set_TTL(UINT32_MAX);
@@ -30,5 +30,5 @@ object_status Text::draw(uint *cell){
     }else {
         item->draw(get_x(), get_y(), ("> "+content).c_str(), font_size, color);
     }
-    return NORMAL;
+    return NORMAL;  
 }

@@ -150,14 +150,15 @@ void fb_draw_pixel(int x, int y, int color)
 	return;
 }
 
-void fb_draw_rect(int x, int y, int w, int h, int color)
+void fb_draw_rect(int x, int y, int w, int h, int color, int *img)
 {
 	if(x < 0) { w += x; x = 0;}
 	if(x+w > SCREEN_WIDTH) { w = SCREEN_WIDTH-x;}
 	if(y < 0) { h += y; y = 0;}
 	if(y+h >SCREEN_HEIGHT) { h = SCREEN_HEIGHT-y;}
 	if(w<=0 || h<=0) return;
-	int *buf = _begin_draw(x,y,w,h);
+	int *buf = img;
+	if (img == NULL) buf = _begin_draw(x,y,w,h);
 /*---------------------------------------------------*/
 	int i_end = x + w, j_end = y + h, offset = y * SCREEN_WIDTH;
 	for (int j = y; j < j_end; j++){
@@ -177,9 +178,11 @@ void fb_draw_rect(int x, int y, int w, int h, int color)
 */
 const int dx[]={3,5,6,6,7,7,8,8,8,7,7,6,6,5,3};
 
-void fb_draw_15_circle(int x, int y, int color){
+void fb_draw_15_circle(int x, int y, int color, int *img){
 	if(x - 7 < 0 || y - 7 < 0 || x + 7 >= SCREEN_WIDTH || y + 7>= SCREEN_HEIGHT) return;
-	int *buf = _begin_draw(x-7,y-7,15,15), offset = (y - 7) * SCREEN_WIDTH;
+	int *buf = img;
+	if (img == NULL) buf = _begin_draw(x-7,y-7,15,15);
+	int offset = (y - 7) * SCREEN_WIDTH;
 	for (int nowy = y - 7, line = 0; nowy <= y + 7; nowy++){
 		int len = dx[line++];
 		for (int nowx = x - len; nowx <= x + len; nowx++)
@@ -189,7 +192,7 @@ void fb_draw_15_circle(int x, int y, int color){
 	return;
 }
 
-void fb_draw_track(int x1, int y1, int x2, int y2, int color){
+void fb_draw_track(int x1, int y1, int x2, int y2, int color, int* img){
 	int dx = abs(x1 - x2), dy = abs(y1 - y2), flag = 0;
 	if (dx < dy){
 		swap(x1, y1); swap(x2, y2); swap(dx, dy);
@@ -201,7 +204,7 @@ void fb_draw_track(int x1, int y1, int x2, int y2, int color){
 
 	int err = dx / 2, y = y1;
 	for (int x = x1; x < x2; x++){
-		if (flag) fb_draw_15_circle(y, x, color);else fb_draw_15_circle(x, y, color);
+		if (flag) fb_draw_15_circle(y, x, color, img);else fb_draw_15_circle(x, y, color, img);
 		err -= dy;
 		if (err < 0) {
 			y += y1 < y2 ? 1 : -1;
@@ -356,11 +359,11 @@ void fb_draw_image(int x, int y, fb_image *image, int color)
 void fb_draw_border(int x, int y, int w, int h, int color)
 {
 	if(w<=0 || h<=0) return;
-	fb_draw_rect(x, y, w, 1, color);
+	fb_draw_rect(x, y, w, 1, color, NULL);
 	if(h > 1) {
-		fb_draw_rect(x, y+h-1, w, 1, color);
-		fb_draw_rect(x, y+1, 1, h-2, color);
-		if(w > 1) fb_draw_rect(x+w-1, y+1, 1, h-2, color);
+		fb_draw_rect(x, y+h-1, w, 1, color, NULL);
+		fb_draw_rect(x, y+1, 1, h-2, color, NULL);
+		if(w > 1) fb_draw_rect(x+w-1, y+1, 1, h-2, color, NULL);
 	}
 }
 

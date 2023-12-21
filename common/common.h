@@ -17,7 +17,46 @@
 /* FPS  */
 #define FPS 30
 
+
+
 /*======================== Map ============================*/
+
+#define MENU_ICON_LEFT 96
+#define MENU_ICON_TOP 172
+#define MENU_ICON_RIGHT 352
+#define MENU_ICON_BOTTTOM 428
+
+#define MENU_ICON_FLUSH_LEFT 352
+#define MENU_ICON_FLUSH_RIGHT 416
+#define MENU_ICON_FLUSH_TOP  364
+#define MENU_ICON_FLUSH_BOTTOM 428
+
+#define MENU_MOVE_LEFT 160
+#define MENU_MOVE_TOP 492
+#define MENU_STOP_LEFT 288
+#define MENU_STOP_TOP 492
+
+#define MENU_CREATE_LEFT 800
+#define MENU_CREATE_TOP 460
+#define MENU_CREATE_RIGHT 928
+#define MENU_CREATE_BOTTOM 524
+
+#define MENU_START_LEFT 800
+#define MENU_START_TOP 460
+#define MENU_START_RIGHT 928
+#define MENU_START_BOTTOM 524
+
+#define MENU_ROOM_LIST_TOP 108
+
+#define MENU_ROOM_LEFT 480
+#define MENU_ROOM_TOP 172
+#define MENU_ROOM_HEIGHT 64
+#define MENU_ROOM_WIDTH 448
+
+#define MENU_ROOM_FLUSH_LEFT 800
+#define MENU_ROOM_FLUSH_RIGHT 928
+#define MENU_ROOM_FLUSH_TOP 76
+#define MENU_ROOM_FLUSH_BOTTOM 140
 
 #define MAP_CELL_SIZE 64
 #define MAP_CELL_HALF (MAP_CELL_SIZE >> 1)
@@ -112,7 +151,7 @@ void fb_update(void);
 
 /*lab2*/
 void fb_draw_pixel(int x, int y, int color);
-void fb_draw_rect(int x, int y, int w, int h, int color);
+void fb_draw_rect(int x, int y, int w, int h, int color, int *img);
 void fb_draw_border(int x, int y, int w, int h, int color);
 void fb_draw_line(int sx, int sy, int dx, int dy, int color);
 
@@ -121,6 +160,9 @@ void fb_draw_image(int x, int y, fb_image *image, int color);
 void fb_draw_text(int x, int y, const char *text, int font_size, int color);
 
 void fb_mix_pixel(char* col_1, char *col_2);
+
+void fb_draw_15_circle(int x, int y, int color, int* img);
+void fb_draw_track(int x1, int y1, int x2, int y2, int color, int* img);
 
 #ifdef __cplusplus
 }
