@@ -6,6 +6,7 @@ std::map<std::string, action_type>action_map={
     {"destructible",ACTION_DESTRUTIBLE},
     {"indestructible",ACTION_INDESTRUTIBLE},
     {"props",ACTION_PROPS},
+    {"props16",ACTION_PROPS16},
     {"bomb_center",ACTION_BOMB_CENTER},
     {"bomb_left",ACTION_BOMB_LEFT},
     {"bomb_right",ACTION_BOMB_RIGHT},
@@ -14,7 +15,8 @@ std::map<std::string, action_type>action_map={
     {"bomb_left_end",ACTION_BOMB_LEFT_END},
     {"bomb_right_end",ACTION_BOMB_RIGHT_END},
     {"bomb_up_end",ACTION_BOMB_UP_END},
-    {"bomb_down_end",ACTION_BOMB_DOWN_END}
+    {"bomb_down_end",ACTION_BOMB_DOWN_END},
+    {"bomb_explode",ACTION_EXPLODE}
 };
  
 Item::Item(Json::Value &value){
@@ -33,12 +35,15 @@ Item::Item(Json::Value &value){
     for (uint i = 0; i < action_num; i++){
         auto &now_value = action_value[i];
         auto action_type = action_map[now_value["action_type"].asString()];
+        if (action_type == ACTION_UNDEFINED) {
+            printf("error!\n");
+        }
         Action &now_action = action[action_type];
         now_action.type = action_type;
         now_action.speed = now_value["speed"].asUInt();
-
+        printf("%s\n",now_value["action_type"].asCString());
         now_action.frame_num = now_value["frame_num"].asUInt();
-
+        printf("speed = %u f_num = %u\n",now_action.speed, now_action.frame_num);
         for (uint j = 0; j < now_action.frame_num; j++){
             now_action.postion.push_back(
                 Postion{
@@ -131,7 +136,7 @@ Item::~Item(){
 // }   
 
 
-// void Item::set_backgroud(std::shared_ptr<Map> mp, Item *icon){
+// void Item::set_background(std::shared_ptr<Map> mp, Item *icon){
     
 //     for (int i = 0; i < MAP_ROW; i++)
 //     for (int j = 0; j < MAP_COLUMN; j++){     

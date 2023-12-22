@@ -4,7 +4,7 @@
 #include "../common/common.h"
 #include "Item.h"
 
-enum object_type {TYPE_BACKGROUD, TYPE_ROLE, TYPE_BOMB, TYPE_MAP, TYPE_TEXT, TYPE_HEALTH};
+enum object_type {TYPE_BACKGROUND, TYPE_ROLE, TYPE_BOMB, TYPE_MAP, TYPE_TEXT, TYPE_HEALTH};
 enum object_status {NORMAL, DELETE};
 
 class Object

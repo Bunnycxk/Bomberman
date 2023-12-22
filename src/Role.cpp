@@ -14,7 +14,7 @@ Role::Role(object_type type, int x, int y, std::shared_ptr<Item> init_item, std:
     act_type = ACTION_STOP;
     frame_now = speed_cnt = 0;
     no_attack_time = 0;
-    move_speed = 2;
+    move_speed = 4;
     player_id = id;
 }
 

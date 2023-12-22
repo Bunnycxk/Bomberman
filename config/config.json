@@ -1,8 +1,8 @@
 {
     "action_config" :
     {
-        "gaming_backgroud":{
-            "image_url" : "./resource/image/backgroud/gaming_backgroud.jpg",
+        "gaming_background":{
+            "image_url" : "./resource/image/background/gaming_background.jpg",
             "image_type" : "jpg",
             "action" : [
                 {
@@ -16,8 +16,8 @@
                 }
             ]
         },
-        "gamestart_backgroud":{
-            "image_url" : "./resource/image/backgroud/gamestart_backgroud.jpg",
+        "gamestart_background":{
+            "image_url" : "./resource/image/background/gamestart_background.jpg",
             "image_type" : "jpg",
             "action" : [
                 {
@@ -31,8 +31,8 @@
                 }
             ]
         },
-        "win_backgroud":{
-            "image_url" : "./resource/image/backgroud/win_backgroud.png",
+        "victory_background":{
+            "image_url" : "./resource/image/background/victory_background.png",
             "image_type" : "png",
             "action" : [
                 {
@@ -46,8 +46,8 @@
                 }
             ]
         },
-        "lose_backgroud":{
-            "image_url" : "./resource/image/backgroud/lose_backgroud.png",
+        "lose_background":{
+            "image_url" : "./resource/image/background/lose_background.png",
             "image_type" : "png",
             "action" : [
                 {
@@ -61,8 +61,8 @@
                 }
             ]
         },
-        "room_backgroud":{
-            "image_url" : "./resource/image/backgroud/room_backgroud.jpg",
+        "room_background":{
+            "image_url" : "./resource/image/background/room_background.jpg",
             "image_type" : "jpg",
             "action" : [
                 {
@@ -76,8 +76,8 @@
                 }
             ]
         },
-        "gamemenu_backgroud":{
-            "image_url" : "./resource/image/backgroud/gamemenu_backgroud.jpg",
+        "gamemenu_background":{
+            "image_url" : "./resource/image/background/gamemenu_background.jpg",
             "image_type" : "jpg",
             "action" : [
                 {
@@ -92,7 +92,7 @@
             ]
         },
         "icon":{
-            "image_url" : "./resource/image/icon/icon.png",
+            "image_url" : "./resource/image/icon/icon_2.0.png",
             "image_type" : "png",
             "action" : [
                 {
@@ -118,68 +118,82 @@
                     "speed" : 1,
                     "frame_num" : 5,
                     "x" : [  0,  64, 128, 192, 256],
-                    "y" : [128, 128, 128, 128, 128],
+                    "y" : [192, 192, 192, 192, 192],
                     "width" :  [64, 64, 64, 64, 64],
                     "height" : [64, 64, 64, 64, 64]
+                },
+				{
+                    "action_type" : "props16",
+                    "speed" : 1,
+                    "frame_num" : 5,
+                    "x" : [  0,  16, 32, 48, 64],
+                    "y" : [256, 256, 256, 256, 256],
+                    "width" :  [16, 16, 16, 16, 16],
+                    "height" : [16, 16, 16, 16, 16]
                 }
             ]
         },
-        "bomb":{
-            "image_url" : "./resource/image/bomb/bomb.png",
+		"boom_stop":{
+			"image_url" : "./resource/image/bomb/boom_stop.png",
+			"image_type" : "png",
+			"action_num" : 1,
+			"action" : [
+				{
+					"action_type" : "stop",
+					"speed" : 10,
+					"frame_num" : 2,
+					"x" : [0, 64],
+					"y" : [0, 0],
+					"width" : [64, 64],
+					"height": [64, 64]
+				}
+			]
+		},
+		"boob_explode":{
+            "image_url" : "./resource/image/bomb/bomb_fire.png",
             "image_type" : "png",
-            "action_num" : 10,
+            "action_num" : 1,
+			"action" : [
+				{
+					"action_type" : "explode",
+					"speed" : 3,
+					"frame_num" : 11,
+					"x" : [0, 192, 384, 576, 768, 960, 1152, 1344, 1536, 1728, 1920],
+					"y" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+					"width" : [192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192],
+					"height": [192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192]
+				}
+			]
+		},
+        "bomb":{
+            "image_url" : "./resource/image/bomb/bomb_2.0.png",
+            "image_type" : "png",
+            "action_num" : 11,
             "action" : [
-                {
-                    "action_type" : "stop",
-                    "speed" : 10,
-                    "frame_num" : 2,
-                    "x": [0, 64],
-                    "y": [0,  0],
-                    "width":  [64, 64],
-                    "height": [64, 64]
-                },
+				{
+					"action_type" : "stop",
+					"speed" : 10,
+					"frame_num" : 2,
+					"x" : [0, 64],
+					"y" : [192, 192],
+					"width" : [64, 64],
+					"height": [64, 64]
+				},
+				{
+					"action_type" : "bomb_explode",
+					"speed" : 3,
+					"frame_num" : 11,
+					"x" : [0, 192, 384, 576, 768, 960, 1152, 1344, 1536, 1728, 1920],
+					"y" : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+					"width" : [192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192],
+					"height": [192, 192, 192, 192, 192, 192, 192, 192, 192, 192, 192]
+				},
                 {
                     "action_type" : "bomb_center",
                     "speed" : 1,
                     "frame_num" : 1,
-                    "x": [128],
-                    "y": [0],
-                    "width":  [64],
-                    "height": [64]
-                },
-                {
-                    "action_type" : "bomb_left",
-                    "speed" : 1,
-                    "frame_num" : 1,
                     "x": [0],
-                    "y": [64],
-                    "width":  [64],
-                    "height": [64]
-                },
-                {
-                    "action_type" : "bomb_right",
-                    "speed" : 1,
-                    "frame_num" : 1,
-                    "x": [128],
-                    "y": [64],
-                    "width":  [64],
-                    "height": [64]
-                },
-                {
-                    "action_type" : "bomb_up",
-                    "speed" : 1,
-                    "frame_num" : 1,
-                    "x": [64],
-                    "y": [64],
-                    "width":  [64],
-                    "height": [64]
-                },
-                {
-                    "action_type" : "bomb_down",
-                    "speed" : 1,
-                    "frame_num" : 1,
-                    "x": [192],
-                    "y": [64],
+                    "y": [256],
                     "width":  [64],
                     "height": [64]
                 },
@@ -187,8 +201,8 @@
                     "action_type" : "bomb_left_end",
                     "speed" : 1,
                     "frame_num" : 1,
-                    "x": [128],
-                    "y": [128],
+                    "x": [0],
+                    "y": [320],
                     "width":  [64],
                     "height": [64]
                 },
@@ -196,8 +210,8 @@
                     "action_type" : "bomb_right_end",
                     "speed" : 1,
                     "frame_num" : 1,
-                    "x": [0],
-                    "y": [128],
+                    "x": [128],
+                    "y": [320],
                     "width":  [64],
                     "height": [64]
                 },
@@ -206,7 +220,7 @@
                     "speed" : 1,
                     "frame_num" : 1,
                     "x": [64],
-                    "y": [128],
+                    "y": [320],
                     "width":  [64],
                     "height": [64]
                 },
@@ -215,7 +229,43 @@
                     "speed" : 1,
                     "frame_num" : 1,
                     "x": [192],
-                    "y": [128],
+                    "y": [320],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_left",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [128],
+                    "y": [384],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_right",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [0],
+                    "y": [384],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_up",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [64],
+                    "y": [384],
+                    "width":  [64],
+                    "height": [64]
+                },
+                {
+                    "action_type" : "bomb_down",
+                    "speed" : 1,
+                    "frame_num" : 1,
+                    "x": [192],
+                    "y": [384],
                     "width":  [64],
                     "height": [64]
                 }
@@ -250,9 +300,10 @@
     "file_config":
     {
         "fb_file" : "/dev/fb0",
-        "font_file" : "./resource/font.ttc",
+        "font_file" : "./resource/font2.ttf",
         "gamepad_file" : "/dev/input/event3",
         "map_file" : "./config/map/map0.txt",
-        "touch_file" : "/dev/input/event1"
+        "touch_file" : "/dev/input/event1",
+        "room_name" : "Bunny"
     }
 }

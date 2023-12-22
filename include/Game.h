@@ -3,7 +3,7 @@
 
 #include "../common/common.h"
 #include "Config.h"
-#include "Backgroud.h"
+#include "Background.h"
 #include "Role.h"
 #include "Text.h"
 #include "Gamepad.h"
@@ -37,22 +37,24 @@ private:
     int room_cur;                            // 当前选择房间
     int room_num;                   
     screen_type screen;                      // 游戏场景
-
+    std::string send_buf;
+    std::vector<std::shared_ptr<Picture>> icon[4];    //玩家头像
 public:
     int bluetooth_fd[4];                // 蓝牙句柄
     bool join_player[4];
     Bluetooth bluetooth;                             
-
+    int frame_lock_flag;
     int player_num, max_player_num;                         // 玩家个数
     uint my_id;         
     bool is_server;                          // 是否是服务器
     Config config;
     std::set< std::shared_ptr<Object> >object;             // 用 set 维护object
     std::shared_ptr<Role> player[4];            // 玩家
-    std::shared_ptr<Backgroud> backgroud;    // 背景
+    std::shared_ptr<Background> background;    // 背景
     // std::shared_ptr<Objectbomb;       
     std::shared_ptr<Map> mp;                 // 地图
     uint time_to_over;                       // 剩余游戏时间
+    bool start_flag;
 public:
     
     Game(/* args */);
@@ -70,6 +72,12 @@ public:
     void generate_probs();
 
     void room_flush();
+
+    void add_send_info(const std::string &content);
+    void send_buf_clear();
+    void send();
+    void sever_update();
+    void update(const char *cmd, uint len, bool add_flag);
     //void create_map();
 };
 

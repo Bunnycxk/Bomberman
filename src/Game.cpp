@@ -24,10 +24,10 @@ Game::Game(/* args */){
 
 	fb_draw_rect(0,0,SCREEN_WIDTH,SCREEN_HEIGHT, COLOR_BLACK, NULL);
 	fb_update();
-	is_server = 0;
+	is_server = false;
 	player_num = 1 , max_player_num = 2;
 	my_id = 0;
-
+	start_flag = false;
 }
 
 Game::~Game(){
@@ -48,23 +48,18 @@ void Game::init(screen_type screen){
 	{
 	case GAMING:
 		{
+			frame_lock_flag = is_server ? (player_num - 1) : 1;			// 锁帧 服务器需要收到除了自己以外的消息，客户端只要收到服务器即可
 
-			if (is_server) {
-				task_delete_file(500);	 	// 不再监听文件。
-				for (int i = 1; i < player_num; i++){
-					bluetooth.send(bluetooth_fd[i], ("start : " + std::to_string(player_num) + '\n').c_str());
-				}
-					
-			}
 			// create a map
 			config.loadmap();
 			mp = std::make_shared<Map>(TYPE_MAP, MAP_LEFT, MAP_TOP, config.item_map["icon"], &config.cell[0][0]);
 			object.insert(mp);
 			
-			// create a backgroud
-			backgroud = std::make_shared<Backgroud>(TYPE_BACKGROUD, 0, 0, config.item_map["gaming_backgroud"]);
-			object.insert(backgroud);
+			// create a background
+			background = std::make_shared<Background>(TYPE_BACKGROUND, 0, 0, config.item_map["gaming_background"]);
+			object.insert(background);
 			printf("num = %d \n" , player_num);
+			
 			// create a role
 			for (int i = 0; i < player_num; i++){
 				player[i] = std::make_shared<Role>(TYPE_ROLE, init_player_x[i], init_player_y[i], config.item_map["role"], mp, 1, i);
@@ -79,21 +74,23 @@ void Game::init(screen_type screen){
 		break;
 	case GAME_START:
 		{
-			backgroud = std::make_shared<Backgroud>(TYPE_BACKGROUD, 0, 0, config.item_map["gamestart_backgroud"]);
-			//backgroud->draw(NULL);
-			object.insert(backgroud);
-
+			background = std::make_shared<Background>(TYPE_BACKGROUND, 0, 0, config.item_map["gamestart_background"]);
+			//background->draw(NULL);
+			object.insert(background);
 		}
 		break;
 	case GAME_MENU:
 		{
-			backgroud = std::make_shared<Backgroud>(TYPE_BACKGROUD, 0, 0, config.item_map["gamemenu_backgroud"]);
-			object.insert(backgroud); 
-			//backgroud->draw(NULL);
+			start_flag = false;
+			player_num = 1 , max_player_num = 2;
+			my_id = 0, is_server = 0;
+			background = std::make_shared<Background>(TYPE_BACKGROUND, 0, 0, config.item_map["gamemenu_background"]);
+			object.insert(background); 
+			//background->draw(NULL);
 	
 
-			backgroud->draw_rect(MENU_MOVE_LEFT - MAP_CELL_HALF, MENU_MOVE_TOP - MAP_CELL_HALF, MAP_CELL_SIZE, MAP_CELL_SIZE, COLOR_WHITE);
-			backgroud->draw_rect(MENU_STOP_LEFT - MAP_CELL_HALF, MENU_STOP_TOP - MAP_CELL_HALF, MAP_CELL_SIZE, MAP_CELL_SIZE, COLOR_WHITE);
+			background->draw_rect(MENU_MOVE_LEFT - MAP_CELL_HALF, MENU_MOVE_TOP - MAP_CELL_HALF, MAP_CELL_SIZE, MAP_CELL_SIZE, COLOR_WHITE);
+			background->draw_rect(MENU_STOP_LEFT - MAP_CELL_HALF, MENU_STOP_TOP - MAP_CELL_HALF, MAP_CELL_SIZE, MAP_CELL_SIZE, COLOR_WHITE);
 			auto temp_obj = std::make_shared<Role>(TYPE_ROLE, MENU_MOVE_LEFT, MENU_MOVE_TOP, config.item_map["role"], nullptr, 1, 0);
 			temp_obj->set_action_type(ACTION_MOVE);
 			object.insert(temp_obj);
@@ -123,15 +120,18 @@ void Game::init(screen_type screen){
 		{
 			for (int i = 0; i < max_player_num; i++)
 				join_player[i] = false;
-			backgroud = std::make_shared<Backgroud>(TYPE_BACKGROUD, 0, 0, config.item_map["room_backgroud"]);
-			object.insert(backgroud); 
-			object.insert(std::make_shared<Text>(TYPE_TEXT, MENU_START_LEFT + 1, MENU_START_TOP + 8,  "开始游戏", 30, COLOR_WHITE, false));
+			background = std::make_shared<Background>(TYPE_BACKGROUND, 0, 0, config.item_map["room_background"]);
+			object.insert(background); 
+			object.insert(std::make_shared<Text>(TYPE_TEXT, MENU_START_LEFT + 1, MENU_START_TOP + 40,  "开始游戏", 30, COLOR_WHITE, false));
+			
 		}
 		break;
 	case GAME_OVER:
 		{
-			backgroud = std::make_shared<Backgroud>(TYPE_BACKGROUD, 0, 0, config.item_map["lose_backgroud"]);
-			object.insert(backgroud);
+			std::string bgname;
+			if (player[my_id] == nullptr) bgname = "lose_backgroud";else bgname = "victory_background"; 
+			background = std::make_shared<Background>(TYPE_BACKGROUND, 0, 0, config.item_map[bgname]);
+			object.insert(background);
 			system("ps -ef | grep 'rfcomm -r' | grep -v grep | awk '{print $2}' | xargs kill -9");
 
 			// int text_x = 400, text_y = 250;
@@ -152,7 +152,7 @@ void Game::init(screen_type screen){
 }
 
 // void Game::create_map(){
-// 	config.game_backgroud->set(mp, config.icon);
+// 	config.game_background->set(mp, config.icon);
 // }
 
 screen_type Game::get_screen(){
@@ -208,8 +208,9 @@ void Game::switch_screen(screen_type scr){
 		break;
 	case GAME_MENU:
 		if (is_server){
-			bluetooth.listen(max_player_num - 1, "Bunny");
+			bluetooth.listen(max_player_num - 1, config.room_name);
 			task_add_timer(500, this, &listen_rfcomm_file);
+			
 		}else {
 			bluetooth.connect(room_cur);
 			bluetooth_fd[0] = open("/dev/rfcomm0", O_RDWR|O_NOCTTY|O_NONBLOCK); /*非阻塞模式*/
@@ -226,11 +227,93 @@ void Game::switch_screen(screen_type scr){
 	default:
 		break;
 	}
-	if (screen == GAMING) {
-		
-	}
-	backgroud = nullptr;
+
+	background = nullptr;
 	init(scr);
+}
+
+void Game::add_send_info(const std::string &content){
+	send_buf = send_buf + content + "; ";
+}
+
+void Game::send_buf_clear(){
+	send_buf.clear();
+}
+
+void Game::send(){
+	if (is_server){
+		for (int i = 1; i < player_num; i++)
+		if (send_buf.empty()) bluetooth.send(bluetooth_fd[i], "None");else bluetooth.send(bluetooth_fd[i], send_buf.c_str());
+	}else{
+		if (send_buf.empty()) bluetooth.send(bluetooth_fd[0], "None");else bluetooth.send(bluetooth_fd[0], send_buf.c_str());
+	}
+	send_buf_clear();
+}
+
+void Game::update(const char *cmd, uint len, bool add_flag){
+	if (add_flag) { //服务器要把收到的客户端操作加入send_buf
+		add_send_info(std::string(cmd, cmd + len));
+	}
+	if (cmd[0] == 'i' && cmd[1] == 'd'){	//id : id
+		my_id = cmd[5] - 48;
+		printf("my_id = %d\n", my_id);
+	}else 
+	if (cmd[0] == 's' && cmd[1] == 't' && cmd[2] == 'a'){ //start : num
+		player_num = cmd[8] - 48;
+		printf("num = %d\n", player_num);
+		switch_screen(GAMING);
+	}else								 
+	if (cmd[0] == 'm' && cmd[1] == 'v'){ //mv 
+		int i = 0;
+		if (cmd[2] == 'l'){			// mvleft : id
+			i = cmd[9] - 48;			
+			player[i]->set_move(-1, 0);
+		}else
+		if (cmd[2] == 'r'){			//mvright : id
+			i = cmd[10] - 48;
+			player[i]->set_move(1, 0);
+		}else
+		if (cmd[2] == 'u'){			//mvup : id
+			i = cmd[7] - 48;
+			player[i]->set_move(0, -1);
+		}else
+		if (cmd[2] == 'd'){			//mvdown : id
+			i = cmd[9] - 48;
+			player[i]->set_move(0, 1);
+		}
+		// TO-DO  如果要支持2人以上需要实现两次转发，由于不清楚效率如何，暂时先只实现两人联机
+		// if (is_server){
+		// 	for (int j = 1; j < game->player_num; j++)
+		// 	if (i!=j){	
+		// 		game->bluetooth.send(game->bluetooth_fd[j], cmd);
+		// 	}
+		// }
+	}else 
+	if (cmd[0] == 's' && cmd[1] == 't' && cmd[2] == 'o' && cmd){ //stop : id
+		int i = cmd[7] - 48;
+		player[i]->set_move(0, 0);
+	}else
+	if (cmd[0] == 'b' && cmd[1] == 'o' && cmd[2] == 'm'){//bomb : id
+		int i = cmd[7] - 48;
+		auto new_bomb = player[i]->set_bomb(mp, config.item_map["bomb"]);
+		if (new_bomb){	// 成功放置
+			object.insert(new_bomb);
+		}
+	}else
+	if (cmd[0] == 'p' && cmd[1] == 'r'){ // probs: i j type
+		int i, j, type;
+		sscanf(cmd, "probs : %d %d %d\n", &i, &j, &type);
+		mp->set_probs(i, j, type);
+	}
+}
+
+void Game::sever_update(){
+	//printf("server_update\n");
+	for (int last = 0, pos = send_buf.find(";", last); pos != std::string::npos; last = pos + 1, pos = send_buf.find(";", last)){
+		//printf("last = %d pos = %d\n",last, pos);
+		update(send_buf.c_str() + last, pos - last + 1, 0);
+        //printf("%d\n",last);
+    }
 }
 
 void Game::generate_probs(){
@@ -253,9 +336,10 @@ void Game::generate_probs(){
 		if (type <= 90) type = 3;else // 10% 是 push
 			type = 4;				  // 10% 是 len++
 
-		mp->set_probs(i, j, type);
-		for (int k = 1; k < player_num; k++)
-		bluetooth.send(bluetooth_fd[k],("probs : " + std::to_string(i) + " " + std::to_string(j) + " " + std::to_string(type)).c_str());
+		//mp->set_probs(i, j, type);
+		// for (int k = 1; k < player_num; k++)
+		// bluetooth.send(bluetooth_fd[k],("probs : " + std::to_string(i) + " " + std::to_string(j) + " " + std::to_string(type)).c_str());
+		add_send_info("probs : " + std::to_string(i) + " " + std::to_string(j) + " " + std::to_string(type));
 		return;
 	}
 	return;
@@ -271,7 +355,7 @@ void Game::generate_probs(){
     但是 c++ 可以重载，因此必须给一个没有用的形参给他，主要是懒得改底层给的task.c了
 */
 
-void draw(int fb, Game *game){
+void draw(int fd, Game *game){
 
 	if (game->get_screen() == GAMING){
 		int alive_num = game->player_num;
@@ -283,8 +367,27 @@ void draw(int fb, Game *game){
 				return;
 			}
 		}
+		
 	}
-
+	
+	
+	//  锁帧
+	if (game->get_screen() == GAME_ROOM || game->get_screen() == GAMING){
+		if (game->is_server) { 
+			game->sever_update();	// 由于收到的消息都会update，服务器自己的操作需要先自己update一次
+			while (game->frame_lock_flag > 0 );	// 服务器必须先收到客户端的消息
+			game->send();			// 此时收集到所有客户端的消息，把收集到的消息以及服务器自己的消息往客户端转发。
+			// 服务器按道理收集到了正确的信息，可以开始绘图
+		}else{
+			// 客户端把当前的操作发送给服务器
+			game->send();
+			// 然后等待服务器把所有操作发回，然后模拟所有操作后可以开始绘图
+			while (game->frame_lock_flag > 0);
+			// 当收到服务器给的消息后，就可以开始绘图。
+		}
+	}
+	
+	
 	
 	//printf("---a new frame---\n");
 	myTime start_time = task_get_time();
@@ -357,12 +460,12 @@ void touch_event_cb(int fd, Game *game){
 				printf("TOUCH_PRESS：x=%d,y=%d,finger=%d\n",x,y,finger);
 				
 				if (MENU_ICON_FLUSH_LEFT <= x && x<= MENU_ICON_FLUSH_RIGHT && MENU_ICON_FLUSH_TOP <= y && y <= MENU_ICON_FLUSH_BOTTOM){
-					game->backgroud->draw_rect(MENU_ICON_LEFT, MENU_ICON_TOP, MENU_ICON_RIGHT - MENU_ICON_LEFT, MENU_ICON_BOTTTOM - MENU_ICON_TOP, COLOR_WHITE);
+					game->background->draw_rect(MENU_ICON_LEFT, MENU_ICON_TOP, MENU_ICON_RIGHT - MENU_ICON_LEFT, MENU_ICON_BOTTTOM - MENU_ICON_TOP, COLOR_WHITE);
 					fb_update();
 				}else 
 				if (MENU_ICON_LEFT < x - 7 && x + 7 < MENU_ICON_RIGHT && MENU_ICON_TOP < y - 7 && y + 7 < MENU_ICON_BOTTTOM){
 					lastx[finger] = x, lasty[finger] = y;
-					game->backgroud->draw_track(x, y, COLOR_BLACK);
+					game->background->draw_track(x, y, COLOR_BLACK);
 					fb_update();
 				}else
 				if (MENU_CREATE_LEFT <= x && x<= MENU_CREATE_RIGHT && MENU_CREATE_TOP <= y && y <= MENU_CREATE_BOTTOM){
@@ -385,7 +488,7 @@ void touch_event_cb(int fd, Game *game){
 				printf("TOUCH_MOVE：x=%d,y=%d,finger=%d\n",x,y,finger);
 				if ((MENU_ICON_LEFT < lastx[finger] - 7 && lastx[finger] + 7 < MENU_ICON_RIGHT && MENU_ICON_TOP < lasty[finger] - 7 && lasty[finger] + 7 < MENU_ICON_BOTTTOM) 
 				&&  (MENU_ICON_LEFT < x - 7 && x + 7 < MENU_ICON_RIGHT && MENU_ICON_TOP < y - 7 && y + 7 < MENU_ICON_BOTTTOM)){
-					game->backgroud->draw_track(x, y, lastx[finger], lasty[finger], COLOR_BLACK);
+					game->background->draw_track(x, y, lastx[finger], lasty[finger], COLOR_BLACK);
 					fb_update();
 					lastx[finger] = x, lasty[finger] = y;
 				}
@@ -409,7 +512,15 @@ void touch_event_cb(int fd, Game *game){
 		case TOUCH_PRESS:
 			
 			if (MENU_START_LEFT <= x && x<= MENU_START_RIGHT && MENU_START_TOP <= y && y <= MENU_START_BOTTOM){
-				if (game->is_server) game->switch_screen(GAMING);else return;
+				if (game->is_server) {
+					task_delete_file(500);	 	// 不再监听其他用户。
+					game->add_send_info("start : " + std::to_string(game->player_num));
+					game->start_flag = true;
+					// for (int i = 1; i < player_num; i++){
+					// 	bluetooth.send(bluetooth_fd[i], ("start : " + std::to_string(player_num) + '\n').c_str());
+					// }
+				}
+				//if (game->is_server) game->switch_screen(GAMING);else return;
 			}
 			break;
 		
@@ -434,6 +545,15 @@ void gamepad_event_cb(int fd, Game *game){
 		{
 			switch (type)
 			{
+			case GAMEPAD_A_RELEASE:
+			case GAMEPAD_B_RELEASE:
+			case GAMEPAD_X_RELEASE:
+			case GAMEPAD_Y_RELEASE:
+			case GAMEPAD_UP_BUTTON_TOUCH:
+			case GAMEPAD_DOWN_BUTTON_RELEASE:
+			case GAMEPAD_LEFT_BUTTON_RELEASE:
+			case GAMEPAD_RIGHT_BUTTON_RELEASE:
+				break;
 			default:
 				game->switch_screen(GAME_MENU);
 				break;
@@ -480,91 +600,98 @@ void gamepad_event_cb(int fd, Game *game){
 		{
 		case GAMEPAD_LEFT_BUTTON_TOUCH:
 			printf("left touch !\n");
-			game->player[game->my_id]->set_move(-1, 0);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("mvleft : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("mvleft : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("mvleft : " + std::to_string(game->my_id));
+			//game->player[game->my_id]->set_move(-1, 0);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("mvleft : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("mvleft : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, -1, 0);
 			break;
 		case GAMEPAD_RIGHT_BUTTON_TOUCH:
 			printf("right touch !\n");
-			game->player[game->my_id]->set_move(1, 0);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("mvright : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("mvright : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("mvright : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(1, 0);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("mvright : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("mvright : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 1, 0);
 			break;
 		case GAMEPAD_LEFT_BUTTON_RELEASE:
 			printf("left release !\n");
-			game->player[game->my_id]->set_move(0, 0);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("stop : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(0, 0);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_RIGHT_BUTTON_RELEASE:
 			printf("right release !\n");
-			game->player[game->my_id]->set_move(0, 0);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("stop : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(0, 0);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_UP_BUTTON_TOUCH:
 			printf("up touch !\n");
-			game->player[game->my_id]->set_move(0, -1);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("mvup : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("mvup : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("mvup : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(0, -1);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("mvup : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("mvup : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 0, -1);
 			break;
 		case GAMEPAD_DOWN_BUTTON_TOUCH:
 			printf("down touch !\n");
-			game->player[game->my_id]->set_move(0, 1);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("mvdown : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("mvdown : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("mvdown : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(0, 1);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("mvdown : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("mvdown : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 0, 1);
 			break;
 		case GAMEPAD_UP_BUTTON_RELEASE:
 			printf("up release !\n");
-			game->player[game->my_id]->set_move(0, 0);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
-			}
+			game->add_send_info("stop : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(0, 0);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_DOWN_BUTTON_RELEASE:
 			printf("down release !\n");
-			game->player[game->my_id]->set_move(0, 0);
-			if (game->is_server) {
-				for (int i = 1; i < game->player_num; i++)
-					game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());				
-			}else{
-				game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
-
-			}
+			game->add_send_info("stop : " + std::to_string(game->my_id));
+			// game->player[game->my_id]->set_move(0, 0);
+			// if (game->is_server) {
+			// 	for (int i = 1; i < game->player_num; i++)
+			// 		game->bluetooth.send(game->bluetooth_fd[i], ("stop : " + std::to_string(game->my_id)).c_str());				
+			// }else{
+			// 	game->bluetooth.send(game->bluetooth_fd[0], ("stop : " + std::to_string(game->my_id)).c_str());
+			// }
 			//role_set_direction(man, 0, 0);
 			break;
 		case GAMEPAD_ERROR:
@@ -574,19 +701,19 @@ void gamepad_event_cb(int fd, Game *game){
 			break;
 		case GAMEPAD_A_TOUCH:
 			printf("button A touch!\n");
-			{
-				auto new_bomb = game->player[game->my_id]->set_bomb(game->mp, game->config.item_map["bomb"]);
-				if (new_bomb){	// 成功放置
-					game->object.insert(new_bomb);
-					if (game->is_server) {
-						for (int i = 1; i < game->player_num; i++)
-							game->bluetooth.send(game->bluetooth_fd[i], ("bomb : " + std::to_string(game->my_id)).c_str());
-					}else{
-						game->bluetooth.send(game->bluetooth_fd[0], ("bomb : " + std::to_string(game->my_id)).c_str());
-					}
-				}
-				
-			}
+			game->add_send_info("bomb : " + std::to_string(game->my_id));
+			// {
+			// 	auto new_bomb = game->player[game->my_id]->set_bomb(game->mp, game->config.item_map["bomb"]);
+			// 	if (new_bomb){	// 成功放置
+			// 		game->object.insert(new_bomb);
+			// 		if (game->is_server) {
+			// 			for (int i = 1; i < game->player_num; i++)
+			// 				game->bluetooth.send(game->bluetooth_fd[i], ("bomb : " + std::to_string(game->my_id)).c_str());
+			// 		}else{
+			// 			game->bluetooth.send(game->bluetooth_fd[0], ("bomb : " + std::to_string(game->my_id)).c_str());
+			// 		}
+			// 	}
+			// }
 			break;
 		default:
 			break;
@@ -620,7 +747,6 @@ void listen_rfcomm_file(int fd, Game *game){
 		if(fd < 0){
 			continue;
 		}else {
-			
 			task_add_file(fd, game, &bluetooth_event_cb);
 			game->bluetooth.send(fd, ("id : " + std::to_string(game->player_num)).c_str());
 			game->bluetooth_fd[game->player_num++] = fd;
@@ -644,57 +770,13 @@ void bluetooth_event_cb(int fd, Game *game){
 	}
 	buf[n] = '\0';
 	printf("bluetooth tty receive \"%s\"\n", buf);
-	if (buf[0] == 'i' && buf[1] == 'd'){	//id : id
-		game->my_id = buf[5] - 48;
-		printf("my_id = %d\n", game->my_id);
-	}else 
-	if (buf[0] == 's' && buf[1] == 't' && buf[2] == 'a'){ //start : num
-		game->player_num = buf[8] - 48;
-		printf("num = %d\n", game->player_num);
-		if (!game->is_server) game->switch_screen(GAMING);
-	}else								 
-	if (buf[0] == 'm' && buf[1] == 'v'){ //mvleft : id
-		int i = 0;
-		if (buf[2] == 'l'){
-			i = buf[9] - 48;			
-			game->player[i]->set_move(-1, 0);
-		}else
-		if (buf[2] == 'r'){//mvright : id
-			i = buf[10] - 48;
-			game->player[i]->set_move(1, 0);
-		}else
-		if (buf[2] == 'u'){//mvup : id
-			i = buf[7] - 48;
-			game->player[i]->set_move(0, -1);
-		}else
-		if (buf[2] == 'd'){
-			i = buf[9] - 48;
-			game->player[i]->set_move(0, 1);
-		}
-		if (game->is_server){
-			for (int j = 1; j < game->player_num; j++)
-			if (i!=j){	
-				game->bluetooth.send(game->bluetooth_fd[j], buf);
-			}
-		}
-	}else 
-	if (buf[0] == 's' && buf[1] == 't'){ //stop : 
-		int i = buf[7] - 48;
-		game->player[i]->set_move(0, 0);
-	}else
-	if (buf[0] == 'b' && buf[1] == 'o'){//bomb : id
-		int i = buf[7] - 48;
-		auto new_bomb = game->player[i]->set_bomb(game->mp, game->config.item_map["bomb"]);
-		if (new_bomb){	// 成功放置
-			game->object.insert(new_bomb);
-		}
-	}else
-	if (buf[0] == 'p' && buf[1] == 'r'){ // probs: i j type
-		int i, j, type;
-		sscanf(buf, "probs : %d %d %d\n", &i, &j, &type);
-		game->mp->set_probs(i, j, type);
-	}
+	std::string s = std::string(buf);
+	for (int last = 0, pos = s.find(";", last); pos != std::string::npos; last = pos + 1, pos = s.find(";", last)){
+		game->update(s.c_str() + last, pos - last + 1, game->is_server);
+        printf("%d\n",last);
+    }
 	
+	game->frame_lock_flag--;
 //	fb_draw_text(2, pen_y, buf, 24, COLOR_TEXT); fb_update();
 //	pen_y += 30;
 	return;

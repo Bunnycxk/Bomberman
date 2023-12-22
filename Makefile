@@ -17,7 +17,7 @@ $(info C_SRCS : $(C_SRCS))
 
 CXX_SRCS := $(wildcard ./src/*.cpp) main.cpp
 
-# CXX_SRCS := ./src/Game.cpp ./src/Backgroud.cpp ./src/Config.cpp ./src/Item.cpp main.cpp
+# CXX_SRCS := ./src/Game.cpp ./src/Background.cpp ./src/Config.cpp ./src/Item.cpp main.cpp
 
 $(info CXX_SRCS :$(CXX_SRCS))
 

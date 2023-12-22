@@ -54,8 +54,8 @@ void Object::print_info(){
     case TYPE_ROLE:
         printf("role :");
         break;
-    case TYPE_BACKGROUD:
-        printf("backgroud :");
+    case TYPE_BACKGROUND:
+        printf("background :");
         break;
     case TYPE_BOMB:
         printf("bomb :");
